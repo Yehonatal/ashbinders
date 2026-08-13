@@ -3,7 +3,7 @@
 **Target Duration**: 4–6 weeks  
 **Team**: 2 Engineers  
 **Engine**: Godot 4.x + C# (.NET 8.0)  
-**Primary Goal**: Establish a rock-solid, scalable architecture and build an ultra-responsive, fun playable prototype demonstrating the foundational Ashbinders gameplay loop.
+**Primary Goal**: Establish a scalable architecture and build a playable prototype demonstrating the foundational Ashbinders gameplay loop.
 
 ---
 

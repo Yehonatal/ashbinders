@@ -6,44 +6,22 @@ description: >-
   combat systems, state machines, hitboxes, animations, physics, and gameplay mechanics.
 ---
 
-# Game Code Writer — Godot 4 & C# Gameplay Programming Skill
+# Game Code Writer — Godot 4 & C# Gameplay Programming
 
-This skill guides the implementation of high-performance, robust, and responsive gameplay systems in Godot 4 using C# (.NET 8).
+Specialized guidelines for implementing gameplay systems in Godot 4 using C# (.NET 8).
 
----
+## 1. Zero-Fluff Standard
+- Do not use emojis in comments, logs, or documentation.
+- Avoid redundant explanations. Write self-documenting code with clear types.
+- Comments must describe rationale, edge cases, and architectural constraints only.
 
-## 1. Core Principles of Gameplay Code
+## 2. Core Gameplay Principles
+- **Input Response**: Implement input buffering (0.15s buffer for attacks/dashes) and coyote time.
+- **Zero-Allocation Hot Loop**: Do not allocate objects (`new`, LINQ, closures, string formatting) in `_Process` or `_PhysicsProcess`. Cache references in `_Ready()`.
+- **Deterministic Physics**: Movement, velocity updates, and collisions belong exclusively in `_PhysicsProcess(double delta)`.
+- **Composition**: Use node-based components (`HealthComponent`, `Hitbox`, `Hurtbox`, `InteractionDetector`, `EmberSocket`) instead of monolithic inheritance hierarchies.
 
-1. **Game Feel is King**:
-   - Always implement responsive input processing.
-   - Use input buffering (e.g., 0.15s buffer for attacks/dashes) and coyote time (for dodge windows/actions).
-   - Ensure snappy acceleration and deceleration curves using `Mathf.MoveToward` or lerp with delta-time compensation.
-   - Add micro-feedback: hit-stop (frame freeze), screen shake, particle sparks, and sound triggers on impact.
-
-2. **Zero-Allocation in the Hot Loop**:
-   - Never allocate objects (`new List<T>()`, `new Class()`, string concatenations, LINQ) inside `_Process` or `_PhysicsProcess`.
-   - Pre-allocate arrays, reuse collections with `.Clear()`, and cache node references in `_Ready()`.
-   - Use structs for lightweight, immutable data packages (e.g., `DamageInfo`, `HitResult`).
-
-3. **Deterministic Physics & Separation of Concerns**:
-   - All physics calculations, movement, velocity updates, and collisions belong in `_PhysicsProcess(double delta)`.
-   - Visual interpolation, camera tracking smoothing, and UI updates belong in `_Process(double delta)`.
-
-4. **Composition Over Deep Inheritance**:
-   - Prefer Node-based component architecture:
-     - `HealthComponent`
-     - `HitboxComponent` / `HurtboxComponent`
-     - `InteractionDetectorComponent`
-     - `EmberSocketComponent`
-   - Entities (Kael, Enemies, Machines) assemble these components rather than inheriting from a massive monolithic `LivingEntity` class.
-
----
-
-## 2. State Machine Architecture
-
-Every dynamic character or interactive machine must use a clean, decoupled finite state machine (FSM).
-
-### State Interface
+## 3. State Machine Pattern
 ```csharp
 public interface IState
 {
@@ -51,92 +29,40 @@ public interface IState
     void Exit();
     void Update(double delta);
     void PhysicsUpdate(double delta);
-    void HandleInput(InputEvent @event);
+    void HandleInput(object? @event = null);
 }
-```
 
-### State Machine Implementation
-```csharp
 public class StateMachine
 {
     public IState? CurrentState { get; private set; }
     private readonly Dictionary<Type, IState> _states = new();
 
-    public void RegisterState(IState state)
-    {
-        _states[state.GetType()] = state;
-    }
+    public void RegisterState(IState state) => _states[state.GetType()] = state;
 
     public void ChangeState<T>() where T : IState
     {
-        if (!_states.TryGetValue(typeof(T), out var newState))
-            throw new KeyNotFoundException($"State {typeof(T).Name} not registered.");
+        if (!_states.TryGetValue(typeof(T), out var next))
+            throw new InvalidOperationException($"State '{typeof(T).Name}' not registered.");
 
         CurrentState?.Exit();
-        CurrentState = newState;
+        CurrentState = next;
         CurrentState.Enter();
     }
 
     public void Update(double delta) => CurrentState?.Update(delta);
     public void PhysicsUpdate(double delta) => CurrentState?.PhysicsUpdate(delta);
-    public void HandleInput(InputEvent @event) => CurrentState?.HandleInput(@event);
+    public void HandleInput(object? @event = null) => CurrentState?.HandleInput(@event);
 }
 ```
 
----
-
-## 3. Combat & Hitbox Conventions
-
-1. **Area2D Layer Separation**:
-   - **Layer 1**: World / Obstacles
-   - **Layer 2**: Player Body
-   - **Layer 3**: Enemy Body
-   - **Layer 4**: Player Hitbox (damages enemies)
-   - **Layer 5**: Enemy Hitbox (damages player)
-   - **Layer 6**: Interactables / Ember Triggers
-
-2. **Damage Pipeline**:
-   ```csharp
-   public enum DamageType
-   {
-       Physical,
-       ForgeFire,
-       MotionImpact,
-       BonelightDrain,
-       Environmental
-   }
-
-   public readonly struct DamageInfo
-   {
-       public int Amount { get; }
-       public DamageType Type { get; }
-       public Vector2 Knockback { get; }
-       public Node2D? Source { get; }
-
-       public DamageInfo(int amount, DamageType type, Vector2 knockback, Node2D? source = null)
-       {
-           Amount = amount;
-           Type = type;
-           Knockback = knockback;
-           Source = source;
-       }
-   }
-
-   public interface IDamageable
-   {
-       void TakeDamage(DamageInfo damage);
-   }
-   ```
-
-3. **Hitbox Execution**:
-   - The attacking weapon/enemy enables its `HitboxComponent` shape only during active attack frames.
-   - When overlapping a `HurtboxComponent`, the Hurtbox calls `TakeDamage` on its parent `IDamageable`.
-
----
-
-## 4. Godot C# Node Lifecycle Guidelines
-
-- **Always check node validity** if referencing nodes dynamically using `GodotObject.IsInstanceValid(node)`.
-- **Disconnect Signals in `_ExitTree()`** if connected via C# delegate handlers to avoid memory leaks.
-- **Export Variables Cleanly**: Use `[Export]` with appropriate types and default values for game designer tuning.
-- **Use StringNames** for repeated actions or animation names (`StringName.Create("idle")`) to avoid string allocation overhead.
+## 4. Combat and Hitbox Standards
+- **Physics Layer Separation**:
+  - Layer 1: World
+  - Layer 2: Player Body
+  - Layer 3: Enemy Body
+  - Layer 4: Player Hitbox
+  - Layer 5: Enemy Hitbox
+  - Layer 6: Interactables
+- **Damage Pipeline**:
+  - Use immutable struct `DamageInfo` containing `Amount`, `DamageType`, `Knockback`, and `Source`.
+  - Hitboxes enable monitoring only during active attack frames.

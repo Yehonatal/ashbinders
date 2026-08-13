@@ -24,7 +24,6 @@ SNAKE_CASE_PATTERN = re.compile(r'^[a-z0-9_]+$')
 def validate_directory(base_dir):
     errors = []
     if not os.path.exists(base_dir):
-        print(f"Directory {base_dir} does not exist yet. Skipping.")
         return errors
 
     for root, dirs, files in os.walk(base_dir):
@@ -52,12 +51,12 @@ def main():
     errors.extend(validate_directory(resources_dir))
 
     if errors:
-        print(f"\n❌ Validation failed with {len(errors)} error(s):")
+        print(f"\n[ERROR] Validation failed with {len(errors)} error(s):")
         for err in errors:
             print(f"  - {err}")
         sys.exit(1)
     else:
-        print("✅ All assets and resources passed validation.")
+        print("[OK] All assets and resources passed validation.")
         sys.exit(0)
 
 if __name__ == "__main__":

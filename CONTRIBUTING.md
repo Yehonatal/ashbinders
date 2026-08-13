@@ -1,6 +1,6 @@
 # Contributing to Ashbinders
 
-Welcome to the **Ashbinders** development team! Whether you are one of the initial core engineers or joining as part of our scaled studio development, this guide outlines the workflow and quality standards required for all contributions.
+This guide outlines the development workflow, architecture boundaries, and quality standards for all contributions to the Ashbinders codebase.
 
 ---
 

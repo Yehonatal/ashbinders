@@ -1,16 +1,16 @@
-# Ashbinders (Open-World Dark-Fantasy RPG)
+# Ashbinders
 
-> **"Power is moved, not created."**
+> "Power is moved, not created."
 
-**Ashbinders** is an open-world dark-fantasy RPG where an ember-mage explores the buried, interconnected ruins of the dying subterranean city of Veyr. By extracting living embers from creatures and ancient machines and placing them into other objects, the player restores forgotten mechanisms, uncovers the truth behind the sacred Heart Ember, and ultimately decides whether the power of the past should be preserved, freed, seized, or quietly transformed.
+Ashbinders is an open-world dark-fantasy RPG where an ember-mage explores the buried, interconnected ruins of the subterranean city of Veyr. By extracting living embers from creatures and ancient machines and placing them into other mechanisms, the player restores forgotten infrastructure, uncovers the truth behind the sacred Heart Ember, and decides whether the power of the past should be preserved, freed, seized, or transformed.
 
 Built with **Godot 4** and **C# (.NET 8.0)**.
 
 ---
 
-## 🏛️ Repository Architecture
+## 1. Repository Architecture
 
-This repository is structured as a scalable monorepo designed to support a studio expanding from 2 to 200+ engineers without architectural debt:
+The repository is organized as a monorepo with domain isolation to scale from prototype to large studio development:
 
 ```text
 ashbinders/
@@ -46,39 +46,32 @@ ashbinders/
 
 ---
 
-## 🚀 Quickstart & Setup
+## 2. Setup and Build
 
 ### Prerequisites
-- [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- [Godot Engine 4.x (.NET version)](https://godotengine.org/download)
+- .NET 8.0 SDK
+- Godot Engine 4.x (.NET version)
 
-### Building & Running
-1. Clone repository:
-   ```bash
-   git clone https://github.com/your-org/ashbinders.git
-   cd ashbinders
-   ```
-2. Build C# solution:
-   ```bash
-   dotnet build game/Ashbinders.csproj
-   ```
-3. Run automated tests:
-   ```bash
-   dotnet test tests/Ashbinders.Tests.csproj
-   ```
-4. Open the `game/` folder in Godot Engine 4 (.NET build) and press **F5** to run.
+### Commands
+- Build solution:
+  ```bash
+  dotnet build game/Ashbinders.csproj
+  ```
+- Run automated tests:
+  ```bash
+  ./scripts/run_tests.sh
+  ```
+- Validate asset naming:
+  ```bash
+  python3 scripts/validate_assets.py
+  ```
 
 ---
 
-## 🗺️ Production Phases
-
-- **[Phases Overview](docs/phases_roadmap.md)**: Studio production roadmap spanning all phases from prototype to launch.
-- **[Phase 1 Detailed Specification](docs/phase_1_detailed.md)**: Tactical 2-engineer foundation & playable prototype roadmap.
-
----
-
-## 📖 Key Documentation
-- **[Architecture Decision Records (ADRs)](docs/architecture/ADR/)**
-- **[Game Design Document & Bible](docs/gameplay/ember_system.md)**
-- **[Coding Standards](.agents/rules/coding_standards.md)**
-- **[Asset Naming Conventions](.agents/rules/asset_and_resource_conventions.md)**
+- [Local Setup and Execution Guide](docs/engineering/local_setup_and_running.md)
+- [Phases Roadmap](docs/phases_roadmap.md)
+- [Phase 1 Detailed Specification](docs/phase_1_detailed.md)
+- [Architecture Decision Records (ADRs)](docs/architecture/ADR/)
+- [Coding Standards](.agents/rules/coding_standards.md)
+- [Documentation Standards](.agents/rules/documentation_standards.md)
+- [Asset Conventions](.agents/rules/asset_and_resource_conventions.md)

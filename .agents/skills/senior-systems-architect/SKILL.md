@@ -6,59 +6,38 @@ description: >-
   Use when designing new subsystems, defining public APIs, structuring save schemas, or establishing technical standards.
 ---
 
-# Senior Systems Architect — Game Systems Architecture Skill
+# Senior Systems Architect — Game Systems Architecture
 
-This skill guides high-level technical decisions, architectural patterns, boundary enforcement, and cross-team contract design for scalable game development.
+Guidelines for technical direction, architectural boundaries, ADR documentation, and cross-team contract design.
 
----
+## 1. Architectural Tenets
+- **Scalable Architecture, Lean Initial Implementation**: Design folder layouts, interfaces, and namespaces to support 200+ developers while writing only the code required for the current milestone.
+- **Strict Domain Isolation**: Each domain (`core`, `gameplay`, `embers`, `combat`, `world`, `factions`, `quests`, `puzzles`, `narrative`, `progression`) must expose an explicit public API.
+- **Directional Dependency Flow**: `UI / Quests / Narrative` -> `World / Factions / Puzzles` -> `Characters / Combat / Embers / Progression` -> `Gameplay` -> `Core`. No circular dependencies.
+- **Event-Driven Decoupling**: Disparate subsystems communicate through typed events dispatched via `EventBus`.
 
-## 1. Architectural Tenets for Scalable Games
-
-1. **"Architecture scales from Day 1; Implementation stays lean for prototypes."**
-   - Lay out clean folder structures, strict namespaces, and decoupling patterns early so adding 50 developers later requires zero structural refactoring.
-   - Build only the minimum gameplay mechanics needed to prove the vertical slice.
-
-2. **Domain Isolation**:
-   - Every major system (`embers`, `combat`, `world`, `quests`, `puzzles`, `factions`, `narrative`, `progression`) must have an explicit public API surface.
-   - Dependencies flow strictly downwards:
-     `World/Quests` $\rightarrow$ `Combat/Embers` $\rightarrow$ `Gameplay` $\rightarrow$ `Core`.
-   - Never create circular dependencies across domains.
-
-3. **Event-Driven Decoupling via Strong Contracts**:
-   - Systems communicate via typed events (`IEvent`) published through an `EventBus`.
-   - Publishers never need to know who is listening (e.g. killing an enemy fires `EnemyDefeatedEvent`; Ember drop system, Quest system, and Audio system all listen independently).
-
-4. **Data-Driven & Toolable**:
-   - Design data models as Godot `Resource` (`.tres`) objects.
-   - Separate code (behavior) from content (numbers, strings, asset paths).
-
----
-
-## 2. Writing Architecture Decision Records (ADRs)
-
-When introducing a major technical system or breaking change, document it in `docs/architecture/ADR/` following this template:
+## 2. Architecture Decision Records (ADRs)
+Document major technical decisions in `docs/architecture/ADR/` using this format:
 
 ```markdown
 # ADR-XXXX: [Short Title]
 
+## Status
+[Proposed | Accepted | Superseded]
+
 ## Context
-What problem are we solving? What are the constraints, requirements, and alternatives considered?
+Technical problem, constraints, and alternatives evaluated.
 
 ## Decision
-What is the chosen approach and technical architecture?
+Selected architecture, component breakdown, and patterns.
 
 ## Consequences
-- **Positive**: Benefits gained, performance improvements, scalability wins.
-- **Negative / Trade-offs**: Added boilerplate, learning curve, migration requirements.
-
-## Compliance & Enforcement
-How is this decision verified (e.g., CI linter, unit test, code review checklist)?
+- Positive: Performance, maintainability, and scaling benefits.
+- Trade-offs: Added complexity, boilerplate, or migration requirements.
 ```
 
----
-
-## 3. Subsystem Contract Guidelines
-
-- **Service Interfaces**: Expose pure C# interfaces (e.g., `ISaveService`, `IEmberRegistry`, `IInteractionManager`).
-- **State Persistence**: Design save schemas with `SchemaVersion`, metadata headers, and isolated state dictionaries.
-- **Async & Threading**: All scene tree mutations MUST occur on Godot's main thread. Use `Callable.From(...)` or `CallDeferred(...)` when returning from background tasks.
+## 3. Subsystem Contract Rules
+- Service interfaces must be pure C# (`ISaveService`, `IEmberRegistry`).
+- Save schemas must include `SchemaVersion` and isolated state dictionaries.
+- Scene tree mutations must occur on the main thread; use `Callable.From(...)` or `CallDeferred(...)` when handling asynchronous events.
+- All documentation and specs must be technical, high-density, and free of emojis and marketing fluff.

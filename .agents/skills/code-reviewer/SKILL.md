@@ -6,43 +6,39 @@ description: >-
   for bugs, memory leaks, domain boundary violations, and non-deterministic physics.
 ---
 
-# Code Reviewer — Game Architecture & Systems Quality Skill
+# Code Reviewer — Game Architecture & Systems Quality
 
-This skill enforces high engineering standards, defensive programming, domain separation, and zero-leak memory management for Godot + C# game code.
+Guidelines for reviewing Godot 4 and C# code changes for correctness, performance, and architecture integrity.
 
----
+## 1. Review Rules & Tone
+- No emojis or subjective conversational filler in review feedback.
+- Point directly to line numbers, concrete failure cases, performance regressions, and domain boundary leaks.
 
-## 1. Code Review Checklist for Game Systems
+## 2. Review Checklist
 
-### A. Architectural Integrity & Domain Boundaries
-- [ ] **No Domain Leaks**: Does `core/` know anything about game lore (e.g. references to Kael, Ember types, Factions)? `core/` must be 100% domain-agnostic.
-- [ ] **Region Modularity**: Are region scripts in `world/regions/<region_name>` self-contained without hard dependencies on other region assets/scenes?
-- [ ] **Event-Driven Decoupling**: Are disparate systems communicating via `EventBus` rather than direct singleton references or spaghetti cross-node calls?
-- [ ] **Data Separation**: Is static game data defined as Godot `Resource` (`.tres`) instead of hardcoded magic values inside C# scripts?
+### A. Architecture and Domain Boundaries
+- `core/` contains zero references to game lore, specific entities, or faction names.
+- Region directories under `world/regions/<region_name>/` are self-contained without cross-region dependencies.
+- Communication between decoupled domains passes through `EventBus`.
+- Static data is defined as Godot `Resource` (`.tres`) files, not hardcoded constants in logic scripts.
 
-### B. Performance & Memory Management (Hot Loop Safety)
-- [ ] **No Allocations in Physics/Process**: Are there `new` instantiations, LINQ queries (`.Where()`, `.Select()`), lambda closures, or string interpolations inside `_Process` or `_PhysicsProcess`?
-- [ ] **Signal Leak Prevention**: Are C# event subscriptions or Godot signal connections properly unregistered in `_ExitTree()` or `Dispose()`?
-- [ ] **Node Reference Caching**: Are `GetNode<T>()` or `%UniqueName` calls cached in `_Ready()` instead of being looked up on every frame?
-- [ ] **Instance Validity**: Are dynamic node references verified with `GodotObject.IsInstanceValid(node)` before accessing properties?
+### B. Performance and Allocations
+- Zero memory allocations inside `_Process` or `_PhysicsProcess` hot loops.
+- C# event subscriptions and Godot signals are disconnected in `_ExitTree()` to prevent memory leaks.
+- Node paths and references are cached in `_Ready()`.
+- Dynamic node references verify `GodotObject.IsInstanceValid(node)` before access.
 
-### C. Game Feel & Determinism
-- [ ] **Delta Time Utilization**: Are all velocity changes and movement equations multiplied by `delta` or processed via `Mathf.MoveToward` in `_PhysicsProcess`?
-- [ ] **State Machine Invariants**: Can an entity enter an illegal state? Are `Exit()` and `Enter()` methods guaranteed to clean up timers, hitboxes, and temporary modifiers?
-- [ ] **Hitbox Safety**: Are attack hitboxes disabled by default and only enabled during valid active frames?
+### C. Game Feel and Determinism
+- Velocity equations use `Mathf.MoveToward` or are multiplied by delta in `_PhysicsProcess`.
+- State machines guarantee complete cleanup of active timers and hitboxes on `Exit()`.
+- Attack hitboxes are disabled by default and enabled only during active frames.
 
-### D. Save / Load & Persistence
-- [ ] **Serialization Completeness**: Does any newly added persistent state implement `ISaveable` or register with `SaveManager`?
-- [ ] **Schema Versioning**: Are save models backwards-compatible and schema-versioned to prevent breaking user saves during updates?
+### D. Persistence
+- Persistent state changes implement `ISaveable` or register with `SaveManager`.
+- Save schemas maintain backward compatibility.
 
----
-
-## 2. Review Verdict Guidelines
-
-When conducting a review, structure the response clearly:
-
-1. **Summary of Changes**: High-level evaluation of the diff.
-2. **Critical Blockers** (Must Fix): Memory leaks, boundary violations, frame-rate drops, crash risks.
-3. **Important Improvements** (Should Fix): Game feel refinements, missing tests, code duplication.
-4. **Architectural / Nitpicks** (Optional): Variable naming, doc comments, minor style preferences.
-5. **Verdict**: `APPROVE`, `REQUEST_CHANGES`, or `COMMENT`.
+## 3. Review Output Format
+- Summary: High-level technical evaluation.
+- Blockers: Memory leaks, boundary violations, frame drops, or crashes.
+- Improvements: Non-blocking performance or design improvements.
+- Verdict: APPROVE, REQUEST_CHANGES, or COMMENT.
