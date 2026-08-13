@@ -1,0 +1,51 @@
+# Godot 4 & C# / .NET .gitignore
+
+# Godot 4 specific ignores
+.godot/
+*.translation
+game/.godot/
+
+# C# / .NET specific ignores
+bin/
+obj/
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+.vscode/
+.idea/
+*.suo
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.opendb
+*.VC.db
+
+# Build and Export outputs
+build/
+export/
+dist/
+game/export/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs & crash dumps
+*.log
+*.dmp
+crash_dump*
+
+# Temporary files
+*.tmp
+*~
+*.swp
+*.bak
+
+# Packages
+*.nupkg
+project.lock.json
+project.assets.json

@@ -1,0 +1,12 @@
+{
+  "environment": "production",
+  "debug": {
+    "enableHitboxDebugDraw": false,
+    "enableStateLogging": false,
+    "invincibility": false,
+    "unlimitedEmberCapacity": false
+  },
+  "gameplay": {
+    "defaultSavePath": "user://saves/save_slot_0.json"
+  }
+}

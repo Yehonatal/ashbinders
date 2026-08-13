@@ -1,0 +1,164 @@
+ASHBINDERS
+FULL GAME DESIGN DOCUMENT
+An open-world dark-fantasy RPG of buried fire and borrowed memory
+Version 2.0 — Expanded Open-World Edition
+Combat, RPG Systems, Puzzle & Reasoning Design
+Table of Contents
+Short Pitch
+Ashbinders is an open-world dark-fantasy RPG where a lone ember-mage explores the buried, interconnected ruins of a dying city. By extracting living embers from creatures and ancient machines and placing them into other objects, the player restores forgotten mechanisms, uncovers the truth behind the sacred Heart Ember, and ultimately chooses whether the power of the past should be preserved, freed, seized, or quietly transformed.
+The whole underground world of Veyr is explorable from the opening hours. Progress is not measured in levels or keys, but in Ember Capacity — how much borrowed life Kael can carry, and what they are willing to carry it for.
+The Core Idea
+Long ago, the city of Veyr was built around a sacred fire called the Heart Ember. That fire did not simply give heat — it powered machines, protected the city from monsters, and stored fragments of human memories.
+When the Heart Ember shattered, its pieces spread throughout the underground ruins. Without it, the city above slowly began to die. Lights went out, water systems stopped working, and strange ember creatures began wandering the ruins.
+You play as Kael, one of the last Ashbinders — people who can see and move embers between living creatures and ancient machines.
+The game is about descending into an open, living underground world, recovering ember fragments, choosing sides among the factions who want them, and deciding how the power of the past should ultimately be used.
+Design Pillars
+Power is moved, not created — every system (combat, puzzles, traversal, story) draws from the same finite resource.
+The whole map is walkable from hour one — progression gates capability, not geography.
+Every choice is a small version of the ending — free it, harvest it, or something in between.
+RPG growth, puzzle logic, and reasoning/deduction are woven into the same ember mechanic rather than bolted on as separate systems.
+World Structure — Open World, Not Corridor
+Veyr's underground is a single, continuous, fully explorable open world. The six major regions below are not sequential levels; they are zones you can see, enter, and partially explore from the very beginning. What changes over time is not where you can walk, but what you can survive, unlock, and understand once you arrive.
+There are no locked doors and no level gates. Instead, every region is gated by Ember Capacity and by which ember types Kael currently carries — a player who wanders into the Furnace Spire in hour two will see incredible, dangerous machinery they cannot yet interact with. That's the hook that pulls them back later, entirely of their own will.
+The Six Regions
+Region
+Original Chapter
+Identity
+The Settlement
+Opening hub (new role)
+Living hub; reacts in real time to how you route ember power
+The Underlevels
+Ember Mines
+Sprawling mining network; scavenger rivalry; deep-shaft dives
+The Drowned Districts
+Silent Aqueduct
+Flooded semi-open zone; water level is a map-wide puzzle mechanic
+The Bonelight Warrens
+New region
+Light/dark ember puzzles; the map physically reshapes in darkness
+The Sunken Archive
+New region
+Memory-ember puzzles; replay past events to find hidden paths
+The Furnace Spire
+Ash Cathedral
+Vertical open zone; multiple climbable approach routes
+Every region keeps its original thematic identity — Survival, Stability, Control over memory — while gaining the population, sub-objectives, and reactivity an open world needs.
+The Ember Capacity System
+Ember Capacity replaces traditional levels and experience points as the game's central progression system.
+How It Works
+Kael carries embers in an interactive vessel — the ancient Ashbinder chain. Early on, capacity is 1 ember at a time.
+Capacity grows permanently by recovering major fragments and rare Anchor Embers, most of which are hidden behind optional vault puzzles.
+Every ember socketed for one purpose (a weapon effect, a door, a companion) is unavailable for every other purpose until moved. This single constraint is what ties combat, puzzles, exploration, and story choice into one resource economy.
+Region difficulty scales with how much ember power Kael is carrying: carrying more makes Kael stronger, but also more visible and more hunted by the Hollow Cult and roaming ember creatures.
+The Ember Tide
+To stop regions from going “dead” after a single visit, the world runs on a slow, map-wide cycle called the Ember Tide. Ambient ember power waxes and wanes across regions on a rotating schedule — a region that was dark and inert on your first visit may surge with active machinery, opened paths, and stronger enemies days later, and vice versa. The Tide is visible in-world (light levels, machine hum, NPC behavior) so players can read it rather than consult a menu.
+High Tide in a region: more active machinery and puzzle paths open, stronger and more numerous ember creatures, better extraction yields.
+Low Tide in a region: quieter, safer, easier to navigate — a good time to explore for lore and side content.
+Late-game: once the world knows Kael exists, the Hollow Cult and free ember creatures begin actively converging on whichever region currently holds High Tide — the world reacts to the player's progress instead of waiting statically.
+Factions & Side Quests
+Five factions compete for ember power and for Kael's loyalty. Each has its own two-to-three quest branch, and helping one consistently costs standing with at least one other — there is no way to max out every faction in a single playthrough.
+The Five Factions
+Faction
+Wants
+Quest Branch Focus
+Settlement Council
+Stability for the surface town
+Infrastructure quests — route embers to keep lights and water running
+The Hollow Cult
+The Heart Ember to stay broken forever
+Sabotage and philosophy quests — convince or resist Kael's restoration path
+The Wardens
+Order and control over ember creatures
+Containment and combat-focused quests; signature Warden weapon head
+The Archivists
+The true history of Veyr
+Investigation and deduction quests; unlock the evidence-board system
+Scavenger Crews
+Profit from rare embers
+Rival extraction quests — race crews to deep-shaft finds, or ally with them
+The Ember-Bound
+Recurring NPCs called the Ember-Bound are partially ember creatures — not simply enemies, but people you can talk to. Each Ember-Bound encounter offers the same core choice found at the ending, in miniature: free them (destroy their ember, releasing them but losing its power) or harvest them (take their ember for a machine or weapon, at a cost to who they were). This choice recurs throughout the entire game, not just at the finale, and quietly tracks toward the two new endings described below.
+Combat & Weapons
+Combat is built as an extension of the ember-transfer mechanic rather than a separate system layered on top of it — the same tool used for extraction is the weapon used to fight.
+The Ashbinder Chain
+The chain from the original lore remains Kael's primary weapon: a flexible, mid-range chain-whip/kusarigama-style tool with a fixed reach mechanic and modular heads found across every region — a blade head, a hammer head, twin sickles, and a spear tip, each changing the moveset while keeping the same chain-length reach.
+Ember Sockets
+Embers extracted from enemies or machines can be socketed into the chain mid-combat for temporary effects, at the direct cost of not having that ember available elsewhere:
+Motion Ember
+ — grants dash-attacks and increased speed.
+Guard Ember
+ — grants parry windows.
+Forge Ember
+ — adds fire damage.
+Bonelight Ember
+ — grants lifesteal.
+Enemy Design
+Enemies are built to make socket choice meaningful rather than a matter of raw stats: a Guard-shielded enemy requires a Motion socket to out-speed its block, for example. This keeps every fight another instance of the game's core question — where should this scarce power go right now?
+Progression
+Weapon heads are found through exploration and faction questlines.
+Socket count is tied directly to Ember Capacity, so combat power and puzzle/traversal power grow from the same investment.
+Each faction offers a signature late-branch weapon head (a Warden weapon, a Cult weapon, and so on), tying combat gear back into the faction system instead of a generic loot table.
+RPG Systems
+Stats Tied to Embers, Not Levels
+Kael has four core stats — Vitality, Ember Resonance, Chain Mastery, and Insight — that grow through exploration finds, faction training quests, and how embers are actually used in play. Repeatedly burning Motion embers grows Chain Mastery; dwelling on Memory embers grows Insight. Growth reflects playstyle rather than grinding.
+Talent Web
+Unlocked points feed into a web rather than a linear tree, spent across three directions: combat (chain heads, socket count), utility (traversal embers, capacity), and reasoning (see below). Respec costs a resource, so early choices still matter without ever being permanently punishing.
+Gear
+Weapon heads, chain-length upgrades, and armor pieces are found in regions or granted by factions. Each carries a light stat trade-off — heavier armor slows the dash, for instance — favoring genuine builds over pure power creep.
+Dialogue With Consequence
+Skill checks gated by Insight or Ember Resonance open new dialogue branches and quest solutions. A high-Insight Kael can talk their way past some encounters entirely, turning stat growth into narrative agency, not just combat power.
+Puzzle Design
+Environmental Ember Puzzles
+The core “which mechanism gets the power” logic from the original three chapters is expanded into multi-step puzzles: embers must be routed through several linked mechanisms in sequence, often requiring the player to backtrack and re-route as new embers are discovered.
+Region-Specific Puzzle Identities
+The Drowned Districts
+ — water-level puzzles; raising or lowering water across a wide map reveals new paths.
+The Bonelight Warrens
+ — light/dark ember puzzles where the map physically reshapes in darkness.
+The Sunken Archive
+ — memory-ember puzzles; the player replays a past event to uncover a hidden path.
+Vault Puzzles
+Each region hides a harder, multi-room puzzle dungeon guarding an Anchor Ember (a permanent capacity upgrade). These vaults are where puzzle-solving becomes genuinely challenging endgame content, not simply a gate standing between the player and forward progress.
+Reasoning & Deduction Systems
+This is the piece the earliest drafts of the concept were missing, and it now runs through both story and mechanics.
+Investigation Quests
+The Archivists' quest line and the game's central “true history” mystery form a real deduction system. The player gathers record-embers, murals, and testimony as evidence, then assembles conclusions themselves on an in-game evidence board / journal — the game never simply states the answer.
+Ember Deduction
+Certain late-game situations require reasoning out which ember type solves a problem from environmental clues rather than trial-and-error — for example, recognizing from visual and audio cues that a frozen mechanism needs a Forge Ember, not a Motion Ember.
+Moral Reasoning, Made Mechanical
+The free-versus-harvest choice that defines the ending is surfaced constantly as genuine reasoning prompts, not a flagged good/evil icon. NPCs give partial and sometimes conflicting information, and the player decides based on the evidence they've gathered — including through every Ember-Bound encounter along the way.
+Main Story & The Ash Cathedral Revelation
+The closer Kael gets to the Furnace Spire, the stronger the ambient embers become, and machines begin reacting to Kael's presence as if recognizing a true Ashbinder.
+Kael eventually discovers the truth: the Heart Ember was created from the memories and emotions of thousands of people. It gave the city prosperity, but it also bound those memories into an eternal flame. When it shattered, those trapped memories were released, creating every ember creature encountered throughout the game. Restoring the Heart Ember would save the city — but it might also trap those memories once again.
+Final Boss — The Hollow Furnace
+Deep beneath the Spire lies the Hollow Furnace, the last machine still trying to rebuild the Heart Ember automatically. Over centuries it has become corrupted, and now consumes every ember it can find, including the memories contained within them. During the battle, Kael uses recovered ember fragments to activate ancient forge mechanisms, disable the furnace's defenses, and finally expose its core. When the furnace is defeated, the final fragment of the Heart Ember becomes whole again.
+Endings
+The original two endings remain the emotional core of the game, now joined by two new endings unlocked through how the player has played — not through a single final-hour choice.
+Ending A — Restoration
+Kael restores the Heart Ember. The city's lights return, water flows again, and the settlement is saved — but the voices within the ember fall silent once more. The hopeful ending, carrying the quiet implication that the memories are once again bound to the flame. Faction standing shapes the epilogue: a Council-favored playthrough shows a rebuilt Settlement; a Warden-favored one shows strict new order imposed over the city.
+Ending B — Release
+Kael destroys the Heart Ember permanently. The remaining ember creatures fade peacefully, the city loses its ancient power forever, and humanity must rebuild without relying on captured memories. Bittersweet, but morally freeing — its epilogue varies with how many Ember-Bound the player chose to free over the course of the game.
+Ending C — Ascension (new)
+A power-fantasy path available to a Kael who has consistently harvested embers and maximized Ember Capacity and Resonance. Kael does not restore or destroy the Heart Ember — they become its new vessel, inheriting its power and its burden. The city survives, but is now utterly dependent on one person.
+Ending D — Fusion (new)
+An ambiguous, quiet ending, unlockable only through consistent empathy across the entire playthrough — a high rate of freeing the Ember-Bound, deep Archivist investigation, and high Insight. Kael finds a third way: the memories are neither bound nor destroyed, but gently released into the living world itself, changing Veyr permanently in ways no single ending screen can fully summarize.
+The Emotional Theme
+The game is not about becoming stronger. It is about what should be done with the power of the past.
+Region
+Represents
+The Settlement
+What we owe the living
+The Underlevels
+Survival
+The Drowned Districts
+Stability and protection
+The Bonelight Warrens
+What we fear in the dark
+The Sunken Archive
+Truth and memory — history itself
+The Furnace Spire
+Control over memory and history
+Because embers are simultaneously fuel, weapon, memory, and person, every mechanical decision the player makes — in combat, in a puzzle, in a side quest — is also a small emotional one. That is Ashbinders' central design bet: an open world doesn't need a huge cast or a sprawling map to feel meaningful if every system in it is asking the same honest question in a different way.
+Scope Note
+This document describes a genuinely large RPG: six open regions, five factions with branching quest lines, a full combat and gear system, an RPG stat and talent web, region-specific puzzle identities plus vault dungeons, a standalone reasoning/deduction system, and four distinct endings with faction-dependent epilogues.
+The recommended next step is a phased production roadmap, starting with a vertical slice built around a single region — most likely the Underlevels, since it already exercises the ember-transfer core loop, one faction (Scavenger Crews), basic combat with two weapon heads, and one vault puzzle. That slice would prove out the core systems before committing to the full six-region scope.

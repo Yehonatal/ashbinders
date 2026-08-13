@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="unit/**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\game\core\architecture\IState.cs" Link="Core\IState.cs" />
+    <Compile Include="..\game\core\architecture\StateMachine.cs" Link="Core\StateMachine.cs" />
+    <Compile Include="..\game\core\events\IGameEvent.cs" Link="Core\IGameEvent.cs" />
+    <Compile Include="..\game\core\events\EventBus.cs" Link="Core\EventBus.cs" />
+    <Compile Include="..\game\core\logging\GameLogger.cs" Link="Core\GameLogger.cs" />
+    <Compile Include="..\game\core\save\ISaveable.cs" Link="Core\ISaveable.cs" />
+    <Compile Include="..\game\core\save\SaveData.cs" Link="Core\SaveData.cs" />
+    <Compile Include="..\game\core\save\SaveManager.cs" Link="Core\SaveManager.cs" />
+    <Compile Include="..\game\embers\core\EmberType.cs" Link="Embers\EmberType.cs" />
+    <Compile Include="..\game\gameplay\damage\DamageType.cs" Link="Gameplay\DamageType.cs" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,12 @@
+{
+  "environment": "development",
+  "debug": {
+    "enableHitboxDebugDraw": true,
+    "enableStateLogging": true,
+    "invincibility": false,
+    "unlimitedEmberCapacity": false
+  },
+  "gameplay": {
+    "defaultSavePath": "user://saves/dev_save.json"
+  }
+}

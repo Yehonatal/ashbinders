@@ -1,0 +1,12 @@
+{
+  "environment": "staging",
+  "debug": {
+    "enableHitboxDebugDraw": false,
+    "enableStateLogging": true,
+    "invincibility": false,
+    "unlimitedEmberCapacity": false
+  },
+  "gameplay": {
+    "defaultSavePath": "user://saves/staging_save.json"
+  }
+}
