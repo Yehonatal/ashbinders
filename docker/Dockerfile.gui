@@ -37,5 +37,4 @@ WORKDIR /app
 
 COPY . .
 
-# Run Godot project directly
-CMD ["godot", "--path", "/app/game", "res://scenes/test/gym_underlevels.tscn"]
+ENTRYPOINT ["/app/docker/entrypoint_gui.sh"]
