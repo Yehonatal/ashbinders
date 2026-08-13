@@ -23,6 +23,11 @@ obj/
 *.opendb
 *.VC.db
 
+# Dotnet CLI & NuGet Local Caches
+.dotnet/
+.nuget/
+packages/
+
 # Build and Export outputs
 build/
 export/
