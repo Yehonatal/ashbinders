@@ -12,12 +12,12 @@ namespace Ashbinders.Characters.Player;
 [GlobalClass]
 public partial class PlayerController : CharacterBody2D, IDamageable
 {
-    [Export] public float BaseMoveSpeed { get; set; } = 180.0f;
-    [Export] public float Acceleration { get; set; } = 1400.0f;
-    [Export] public float Friction { get; set; } = 1200.0f;
-    [Export] public float DashSpeed { get; set; } = 480.0f;
-    [Export] public float DashDuration { get; set; } = 0.18f;
-    [Export] public float DashCooldown { get; set; } = 0.6f;
+    [Export] public float BaseMoveSpeed { get; set; } = 220.0f;
+    [Export] public float Acceleration { get; set; } = 1600.0f;
+    [Export] public float Friction { get; set; } = 1400.0f;
+    [Export] public float DashSpeed { get; set; } = 550.0f;
+    [Export] public float DashDuration { get; set; } = 0.2f;
+    [Export] public float DashCooldown { get; set; } = 0.5f;
 
     [Export] public HealthComponent? Health { get; set; }
     [Export] public InteractionDetector? Interactor { get; set; }
@@ -31,34 +31,30 @@ public partial class PlayerController : CharacterBody2D, IDamageable
     private double _dashTimer;
     private double _dashCooldownTimer;
     private Vector2 _dashDirection;
+    private Node2D? _visualNode;
+    private double _attackVisualTimer;
 
     public override void _Ready()
     {
+        AddToGroup("player");
+
         Health ??= GetNodeOrNull<HealthComponent>("HealthComponent");
         Interactor ??= GetNodeOrNull<InteractionDetector>("InteractionDetector");
         Chain ??= GetNodeOrNull<AshbinderChain>("AshbinderChain");
         ChainSocket ??= GetNodeOrNull<EmberSocket>("EmberSocket");
-    }
+        _visualNode = GetNodeOrNull<Node2D>("VisualPlaceholder");
 
-    public override void _UnhandledInput(InputEvent @event)
-    {
-        if (@event.IsActionPressed("attack"))
+        if (ChainSocket != null && ChainSocket.CurrentEmber == null)
         {
-            PerformAttack();
-        }
-        else if (@event.IsActionPressed("dash"))
-        {
-            PerformDash();
-        }
-        else if (@event.IsActionPressed("interact"))
-        {
-            Interactor?.TryInteract(this);
+            // Give Kael 1 Motion Ember to start Phase 1 prototype
+            ChainSocket.TryInsertEmber(new MotionEmber());
         }
     }
 
     public override void _PhysicsProcess(double delta)
     {
         UpdateTimers(delta);
+        HandleActionInputs();
 
         if (IsDashing)
         {
@@ -67,10 +63,10 @@ public partial class PlayerController : CharacterBody2D, IDamageable
             return;
         }
 
-        var input = Input.GetVector("move_left", "move_right", "move_up", "move_down");
+        var input = GetMovementInput();
         if (input.LengthSquared() > 0.01f)
         {
-            FacingDirection = input.Normalized();
+            FacingDirection = input;
             var targetSpeed = CalculateCurrentMoveSpeed();
             Velocity = Velocity.MoveToward(input * targetSpeed, (float)(Acceleration * delta));
         }
@@ -80,6 +76,48 @@ public partial class PlayerController : CharacterBody2D, IDamageable
         }
 
         MoveAndSlide();
+
+        // Update Chain orientation
+        if (Chain != null)
+        {
+            Chain.Rotation = FacingDirection.Angle();
+        }
+
+        QueueRedraw();
+    }
+
+    private Vector2 GetMovementInput()
+    {
+        var dir = Vector2.Zero;
+
+        if (Input.IsActionPressed("move_right") || Input.IsKeyPressed(Key.D) || Input.IsKeyPressed(Key.Right))
+            dir.X += 1.0f;
+        if (Input.IsActionPressed("move_left") || Input.IsKeyPressed(Key.A) || Input.IsKeyPressed(Key.Left))
+            dir.X -= 1.0f;
+        if (Input.IsActionPressed("move_down") || Input.IsKeyPressed(Key.S) || Input.IsKeyPressed(Key.Down))
+            dir.Y += 1.0f;
+        if (Input.IsActionPressed("move_up") || Input.IsKeyPressed(Key.W) || Input.IsKeyPressed(Key.Up))
+            dir.Y -= 1.0f;
+
+        return dir.Normalized();
+    }
+
+    private void HandleActionInputs()
+    {
+        if (Input.IsActionJustPressed("attack") || Input.IsKeyPressed(Key.J) || Input.IsMouseButtonPressed(MouseButton.Left))
+        {
+            PerformAttack();
+        }
+
+        if (Input.IsActionJustPressed("dash") || Input.IsKeyPressed(Key.K) || Input.IsKeyPressed(Key.Space))
+        {
+            PerformDash();
+        }
+
+        if (Input.IsActionJustPressed("interact") || Input.IsKeyPressed(Key.E))
+        {
+            Interactor?.TryInteract(this);
+        }
     }
 
     private float CalculateCurrentMoveSpeed()
@@ -107,12 +145,22 @@ public partial class PlayerController : CharacterBody2D, IDamageable
         {
             _dashCooldownTimer = Math.Max(0.0, _dashCooldownTimer - delta);
         }
+
+        if (_attackVisualTimer > 0.0)
+        {
+            _attackVisualTimer = Math.Max(0.0, _attackVisualTimer - delta);
+        }
     }
 
     public bool PerformAttack()
     {
         if (IsDashing || Chain == null) return false;
-        return Chain.TryAttack(FacingDirection);
+        var success = Chain.TryAttack(FacingDirection);
+        if (success)
+        {
+            _attackVisualTimer = 0.15;
+        }
+        return success;
     }
 
     public bool PerformDash()
@@ -131,5 +179,21 @@ public partial class PlayerController : CharacterBody2D, IDamageable
         if (IsInvulnerable || Health == null) return;
         Health.ApplyDamage(damage.Amount);
         Velocity += damage.Knockback;
+    }
+
+    public override void _Draw()
+    {
+        if (_attackVisualTimer > 0.0)
+        {
+            // Visual slash arc for Ashbinder Chain attack
+            var attackOffset = FacingDirection * 40.0f;
+            DrawCircle(attackOffset, 24.0f, new Color(1.0f, 0.8f, 0.2f, 0.6f));
+        }
+
+        if (IsDashing)
+        {
+            // Dash ghost ring
+            DrawCircle(Vector2.Zero, 18.0f, new Color(0.4f, 0.7f, 1.0f, 0.4f));
+        }
     }
 }

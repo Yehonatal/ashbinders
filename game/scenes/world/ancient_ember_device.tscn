@@ -1,0 +1,48 @@
+[gd_scene load_steps=5 format=3 uid="uid://ancient_ember_device_scene_01"]
+
+[ext_resource type="Script" path="res://world/interactables/AncientEmberDevice.cs" id="1_device"]
+[ext_resource type="Script" path="res://embers/core/EmberSocket.cs" id="2_socket"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_trigger"]
+radius = 36.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(32, 32)
+
+[node name="AncientEmberDevice" type="Area2D" node_paths=PackedStringArray("Socket")]
+collision_layer = 32
+collision_mask = 0
+script = ExtResource("1_device")
+DeviceId = "ancient_ember_device_01"
+RequiredEmberType = 0
+Socket = NodePath("EmberSocket")
+
+[node name="TriggerShape" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_trigger")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="BodyCollision" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource("RectangleShape2D_body")
+
+[node name="VisualBase" type="ColorRect" parent="."]
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+color = Color(0.35, 0.3, 0.25, 1)
+
+[node name="MachineCore" type="ColorRect" parent="VisualBase"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 24.0
+offset_bottom = 24.0
+color = Color(0.85, 0.6, 0.15, 1)
+
+[node name="EmberSocket" type="Node" parent="."]
+script = ExtResource("2_socket")
+AllowedType = 0
+AcceptAnyType = false

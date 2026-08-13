@@ -24,8 +24,8 @@ public partial class BasicEnemy : CharacterBody2D, IDamageable
     public delegate void DefeatedEventHandler(BasicEnemy enemy);
 
     [Export] public float MoveSpeed { get; set; } = 110.0f;
-    [Export] public float DetectionRadius { get; set; } = 180.0f;
-    [Export] public float AttackRange { get; set; } = 36.0f;
+    [Export] public float DetectionRadius { get; set; } = 280.0f;
+    [Export] public float AttackRange { get; set; } = 40.0f;
     [Export] public int BaseAttackDamage { get; set; } = 10;
     [Export] public float AttackCooldown { get; set; } = 1.2f;
 
@@ -38,6 +38,7 @@ public partial class BasicEnemy : CharacterBody2D, IDamageable
 
     private double _attackTimer;
     private double _hitstunTimer;
+    private double _attackWindupTimer;
 
     public override void _Ready()
     {
@@ -61,6 +62,12 @@ public partial class BasicEnemy : CharacterBody2D, IDamageable
     {
         if (State == EnemyState.Dead) return;
 
+        // Auto-acquire player target if not assigned
+        if (Target == null || !GodotObject.IsInstanceValid(Target))
+        {
+            Target = (Node2D?)GetTree().GetFirstNodeInGroup("player") ?? GetParent()?.GetNodeOrNull<Node2D>("Player");
+        }
+
         UpdateTimers(delta);
 
         switch (State)
@@ -72,7 +79,7 @@ public partial class BasicEnemy : CharacterBody2D, IDamageable
                 ProcessChase(delta);
                 break;
             case EnemyState.Attack:
-                ProcessAttack();
+                ProcessAttack(delta);
                 break;
             case EnemyState.Hurt:
                 ProcessHurt();
@@ -80,6 +87,7 @@ public partial class BasicEnemy : CharacterBody2D, IDamageable
         }
 
         MoveAndSlide();
+        QueueRedraw();
     }
 
     private void UpdateTimers(double delta)
@@ -124,6 +132,7 @@ public partial class BasicEnemy : CharacterBody2D, IDamageable
         if (distance <= AttackRange && _attackTimer <= 0.0)
         {
             State = EnemyState.Attack;
+            _attackWindupTimer = 0.3;
             return;
         }
 
@@ -131,19 +140,32 @@ public partial class BasicEnemy : CharacterBody2D, IDamageable
         Velocity = direction * MoveSpeed;
     }
 
-    private void ProcessAttack()
+    private void ProcessAttack(double delta)
     {
         Velocity = Vector2.Zero;
-        _attackTimer = AttackCooldown;
-
-        // Trigger attack animation / hitbox active frames
-        State = EnemyState.Chase;
+        if (_attackWindupTimer > 0.0)
+        {
+            _attackWindupTimer -= delta;
+            if (_attackWindupTimer <= 0.0)
+            {
+                // Deal damage if player in range
+                if (Target != null && GlobalPosition.DistanceTo(Target.GlobalPosition) <= AttackRange * 1.2f)
+                {
+                    if (Target is IDamageable damageable)
+                    {
+                        var dir = (Target.GlobalPosition - GlobalPosition).Normalized();
+                        damageable.TakeDamage(new DamageInfo(BaseAttackDamage, DamageType.Physical, dir * 180.0f, this));
+                    }
+                }
+                _attackTimer = AttackCooldown;
+                State = EnemyState.Chase;
+            }
+        }
     }
 
     private void ProcessHurt()
     {
-        // Decelerate during hitstun
-        Velocity = Velocity.MoveToward(Vector2.Zero, 800.0f * (float)GetPhysicsProcessDeltaTime());
+        Velocity = Velocity.MoveToward(Vector2.Zero, 600.0f * (float)GetPhysicsProcessDeltaTime());
     }
 
     public void TakeDamage(DamageInfo damage)
@@ -153,7 +175,7 @@ public partial class BasicEnemy : CharacterBody2D, IDamageable
         Health.ApplyDamage(damage.Amount);
         Velocity = damage.Knockback;
         State = EnemyState.Hurt;
-        _hitstunTimer = 0.15f;
+        _hitstunTimer = 0.2f;
     }
 
     private void OnDied()
@@ -161,8 +183,28 @@ public partial class BasicEnemy : CharacterBody2D, IDamageable
         State = EnemyState.Dead;
         Velocity = Vector2.Zero;
         EmitSignal(SignalName.Defeated, this);
-
-        // Spawn Ember drop or fade out
         QueueFree();
+    }
+
+    public override void _Draw()
+    {
+        if (State == EnemyState.Hurt)
+        {
+            // Flash white on hit
+            DrawCircle(Vector2.Zero, 16.0f, Colors.White);
+        }
+        else if (State == EnemyState.Attack)
+        {
+            // Attack windup ring
+            DrawCircle(Vector2.Zero, 20.0f, new Color(1.0f, 0.2f, 0.2f, 0.5f));
+        }
+
+        // Draw small health indicator above enemy
+        if (Health != null && Health.CurrentHealth < Health.MaxHealth)
+        {
+            var hpRatio = (float)Health.CurrentHealth / Health.MaxHealth;
+            DrawRect(new Rect2(-16, -24, 32, 4), new Color(0.2f, 0.2f, 0.2f));
+            DrawRect(new Rect2(-16, -24, 32 * hpRatio, 4), new Color(0.9f, 0.2f, 0.2f));
+        }
     }
 }

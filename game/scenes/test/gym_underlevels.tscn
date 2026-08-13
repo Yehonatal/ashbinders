@@ -1,0 +1,131 @@
+[gd_scene load_steps=8 format=3 uid="uid://gym_underlevels_scene_01"]
+
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1_player"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/basic_enemy.tscn" id="2_enemy"]
+[ext_resource type="PackedScene" path="res://scenes/world/ancient_ember_device.tscn" id="3_device"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_horiz"]
+size = Vector2(1280, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_vert"]
+size = Vector2(32, 720)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pillar"]
+size = Vector2(64, 64)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gate"]
+size = Vector2(32, 160)
+
+[node name="UnderlevelsGym" type="Node2D"]
+
+[node name="FloorBackground" type="ColorRect" parent="."]
+offset_right = 1280.0
+offset_bottom = 720.0
+mouse_filter = 2
+color = Color(0.08, 0.09, 0.11, 1)
+
+[node name="GridPattern" type="ColorRect" parent="."]
+offset_left = 64.0
+offset_top = 64.0
+offset_right = 1216.0
+offset_bottom = 656.0
+mouse_filter = 2
+color = Color(0.12, 0.14, 0.17, 1)
+
+[node name="ChamberDivider" type="ColorRect" parent="."]
+offset_left = 800.0
+offset_top = 64.0
+offset_right = 832.0
+offset_bottom = 280.0
+mouse_filter = 2
+color = Color(0.2, 0.22, 0.26, 1)
+
+[node name="ChamberDividerLower" type="ColorRect" parent="."]
+offset_left = 800.0
+offset_top = 440.0
+offset_right = 832.0
+offset_bottom = 656.0
+mouse_filter = 2
+color = Color(0.2, 0.22, 0.26, 1)
+
+[node name="ArenaWalls" type="StaticBody2D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="WallNorth" type="CollisionShape2D" parent="ArenaWalls"]
+position = Vector2(640, 16)
+shape = SubResource("RectangleShape2D_wall_horiz")
+
+[node name="WallSouth" type="CollisionShape2D" parent="ArenaWalls"]
+position = Vector2(640, 704)
+shape = SubResource("RectangleShape2D_wall_horiz")
+
+[node name="WallWest" type="CollisionShape2D" parent="ArenaWalls"]
+position = Vector2(16, 360)
+shape = SubResource("RectangleShape2D_wall_vert")
+
+[node name="WallEast" type="CollisionShape2D" parent="ArenaWalls"]
+position = Vector2(1264, 360)
+shape = SubResource("RectangleShape2D_wall_vert")
+
+[node name="DividerUpperCol" type="CollisionShape2D" parent="ArenaWalls"]
+position = Vector2(816, 172)
+shape = SubResource("RectangleShape2D_gate")
+
+[node name="DividerLowerCol" type="CollisionShape2D" parent="ArenaWalls"]
+position = Vector2(816, 548)
+shape = SubResource("RectangleShape2D_gate")
+
+[node name="PillarA" type="CollisionShape2D" parent="ArenaWalls"]
+position = Vector2(384, 240)
+shape = SubResource("RectangleShape2D_pillar")
+
+[node name="PillarAVisual" type="ColorRect" parent="ArenaWalls/PillarA"]
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 32.0
+mouse_filter = 2
+color = Color(0.22, 0.25, 0.3, 1)
+
+[node name="PillarB" type="CollisionShape2D" parent="ArenaWalls"]
+position = Vector2(384, 480)
+shape = SubResource("RectangleShape2D_pillar")
+
+[node name="PillarBVisual" type="ColorRect" parent="ArenaWalls/PillarB"]
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 32.0
+mouse_filter = 2
+color = Color(0.22, 0.25, 0.3, 1)
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+position = Vector2(180, 360)
+
+[node name="BasicEnemy" parent="." instance=ExtResource("2_enemy")]
+position = Vector2(560, 360)
+
+[node name="AncientEmberDevice" parent="." instance=ExtResource("3_device")]
+position = Vector2(740, 240)
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="TitleLabel" type="Label" parent="HUD"]
+offset_left = 24.0
+offset_top = 20.0
+offset_right = 500.0
+offset_bottom = 46.0
+mouse_filter = 2
+text = "ASHBINDERS — Phase 1 Prototype (Underlevels Gym)"
+
+[node name="ControlsPanel" type="Label" parent="HUD"]
+offset_left = 24.0
+offset_top = 50.0
+offset_right = 500.0
+offset_bottom = 140.0
+mouse_filter = 2
+text = "W/A/S/D or Arrow Keys: Move
+J or Left Click: Attack (Ashbinder Chain)
+K or Space: Dash (Kinetic Burst)
+E: Extract Ember from Enemy / Insert into Device"
