@@ -69,6 +69,7 @@ ashbinders/
 ---
 
 - [Local Setup and Execution Guide](docs/engineering/local_setup_and_running.md)
+- [Docker Guide](docs/engineering/docker_guide.md)
 - [Phases Roadmap](docs/phases_roadmap.md)
 - [Phase 1 Detailed Specification](docs/phase_1_detailed.md)
 - [Architecture Decision Records (ADRs)](docs/architecture/ADR/)

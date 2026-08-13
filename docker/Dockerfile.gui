@@ -1,0 +1,41 @@
+# Dockerfile for running Godot Game with X11 GUI forwarding on Linux
+FROM mcr.microsoft.com/dotnet/sdk:8.0
+
+# Install graphics, audio, and X11 dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    wget \
+    unzip \
+    libx11-6 \
+    libxcursor1 \
+    libxinerama1 \
+    libxi6 \
+    libxrandr2 \
+    libxrender1 \
+    libxext6 \
+    libxfixes3 \
+    libgl1-mesa-glx \
+    libgl1-mesa-dri \
+    libvulkan1 \
+    mesa-vulkan-drivers \
+    libasound2 \
+    libpulse0 \
+    libfontconfig1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Godot 4.3 .NET
+ENV GODOT_VERSION=4.3
+ENV GODOT_RELEASE=stable
+
+RUN wget -q https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-${GODOT_RELEASE}/Godot_v${GODOT_VERSION}-${GODOT_RELEASE}_mono_linux_x86_64.zip \
+    && unzip Godot_v${GODOT_VERSION}-${GODOT_RELEASE}_mono_linux_x86_64.zip \
+    && mv Godot_v${GODOT_VERSION}-${GODOT_RELEASE}_mono_linux_x86_64/Godot_v${GODOT_VERSION}-${GODOT_RELEASE}_mono_linux.x86_64 /usr/local/bin/godot \
+    && mv Godot_v${GODOT_VERSION}-${GODOT_RELEASE}_mono_linux_x86_64/GodotSharp /usr/local/bin/GodotSharp \
+    && rm -rf Godot_v${GODOT_VERSION}-${GODOT_RELEASE}_mono_linux_x86_64*
+
+WORKDIR /app
+
+COPY . .
+
+# Run Godot project directly
+CMD ["godot", "--path", "/app/game", "res://scenes/test/gym_underlevels.tscn"]

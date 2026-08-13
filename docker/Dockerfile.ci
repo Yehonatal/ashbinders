@@ -1,0 +1,15 @@
+# Dockerfile for Ashbinders CI, Compilation, and Automated Testing
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS base
+
+# Install Python for asset validation scripts
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy repository sources
+COPY . .
+
+# Run build, asset validation, and unit tests
+CMD ["bash", "-c", "python3 scripts/validate_assets.py && dotnet run --project tests/Ashbinders.Tests.Runner.csproj"]

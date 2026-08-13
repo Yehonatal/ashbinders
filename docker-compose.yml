@@ -1,0 +1,36 @@
+services:
+  # 1. Automated Test and CI Build Runner
+  test:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.ci
+    container_name: ashbinders-test
+    environment:
+      - DOTNET_CLI_TELEMETRY_OPTOUT=1
+      - DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+
+  # 2. Web / Browser Player (Served via Nginx on http://localhost:8080)
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.web
+    container_name: ashbinders-web
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+
+  # 3. Linux Desktop GUI Player via X11 Socket Forwarding
+  gui:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.gui
+    container_name: ashbinders-gui
+    environment:
+      - DISPLAY=${DISPLAY}
+      - PULSE_SERVER=unix:/tmp/pulse-socket
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:ro
+      - /dev/dri:/dev/dri:rw
+      - .:/app
+    ipc: host
+    network_mode: host

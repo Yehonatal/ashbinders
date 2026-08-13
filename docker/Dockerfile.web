@@ -1,0 +1,9 @@
+# Dockerfile for serving Godot Web Export via Nginx with Cross-Origin Isolation
+FROM nginx:alpine
+
+COPY docker/nginx.conf /etc/nginx/nginx.conf
+COPY export/web /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
