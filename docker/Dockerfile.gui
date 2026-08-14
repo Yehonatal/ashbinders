@@ -28,6 +28,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 ENV QT_X11_NO_MITSHM=1
 ENV _X11_NO_MITSHM=1
+ENV HOME=/tmp
+ENV XDG_RUNTIME_DIR=/tmp
 
 # Install Godot 4.3 .NET
 ENV GODOT_VERSION=4.3

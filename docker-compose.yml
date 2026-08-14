@@ -29,11 +29,15 @@ services:
     container_name: ashbinders-gui
     environment:
       - DISPLAY=${DISPLAY}
+      - XAUTHORITY=/tmp/.Xauthority
       - PULSE_SERVER=unix:/tmp/pulse-socket
       - QT_X11_NO_MITSHM=1
       - _X11_NO_MITSHM=1
+      - HOME=/tmp
+      - XDG_RUNTIME_DIR=/tmp
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ${XAUTHORITY:-~/.Xauthority}:/tmp/.Xauthority:ro
       - /dev/dri:/dev/dri:rw
       - .:/app
     ipc: host
