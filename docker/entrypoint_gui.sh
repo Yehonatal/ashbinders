@@ -37,4 +37,4 @@ if [ "$HAS_AUDIO_DRIVER" = false ]; then
 fi
 
 echo "=== Launching Godot Game Engine ==="
-godot --path /app/game res://scenes/test/gym_underlevels.tscn "${ARGS[@]}"
+godot --path /app/game res://world/regions/underlevels/gym_underlevels.tscn "${ARGS[@]}"

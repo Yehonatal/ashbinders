@@ -64,5 +64,8 @@ To prevent spaghetti architecture, dependencies must obey strict directional flo
 
 ### Critical Rules
 1. `core/` MUST NEVER import or know about `embers`, `combat`, `characters`, or `factions`.
-2. `world/regions/<region_name>` is an autonomous module. An engineer working in `underlevels` should not edit `furnace_spire` files.
+2. `world/regions/<region_name>` is an autonomous module containing its own scenes, level data, and `gym_<region>.tscn`. An engineer working in `underlevels` should not edit `furnace_spire` files.
 3. Cross-domain notifications MUST go through `EventBus` (`core/events/EventBus.cs`).
+4. PackedScenes (`.tscn`) MUST be co-located within their domain folders (`characters/`, `world/interactables/`, `ui/`, `narrative/npcs/`) rather than in a flat legacy `scenes/` folder (ADR-0006).
+5. Debug / mechanic fixtures are prefixed with `debug_*` or placed in `debug/` subfolders (e.g. `characters/enemies/debug/debug_combat_dummy.tscn`, `world/regions/debug_gym/debug_gym.tscn`).
+

@@ -61,8 +61,8 @@ This prototype demonstrates the core game loop: [i]Explore → Fight → Extract
 
 [b]🎨 VISUAL ASSET LEGEND (Placeholder Geometry):[/b]
 • [color=#3388EE]■ Dark Blue Capsule[/color]: [b]Kael (Ashbinder Protagonist)[/b]
-• [color=#EE4433]● Crimson Circle[/color]: [b]Basic Enemy (Scavenger Prowler)[/b] — Fast melee chaser; drops Motion Ember.
-• [color=#667799]⬡ Steel Hexagon[/color]: [b]Armored Enemy (Hollow Brute)[/b] — Heavy defense. [i]Requires Hammer Head [Key 2] to break armor![/i]
+• [color=#EE4433]● Crimson Circle[/color]: [b]Ember Beast (Underlevels)[/b] — Fast melee chaser; drops Motion Ember.
+• [color=#667799]⬡ Steel Hexagon[/color]: [b]Debug Armored Dummy[/b] — Heavy defense. [i]Requires Hammer Head [Key 2] to break armor![/i]
 • [color=#33CCDD]○ Teal Halo Circle[/color]: [b]Archivist Vael (NPC)[/b] — Approach and press [b]E[/b] to talk.
 • [color=#FFAA22]● Amber Glowing Orb[/color]: [b]Motion Ember[/b] — Boosts dash speed / powers Ancient Device.
 • [color=#4488FF]● Blue Glowing Orb[/color]: [b]Guard Ember[/b] — Drops from Armored Enemy.

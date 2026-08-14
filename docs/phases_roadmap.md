@@ -38,7 +38,7 @@ This document outlines the phased development roadmap for **Ashbinders**, scalin
 ## Phase 1 — Technical Foundation & Playable Prototype
 - **Team Size**: 2 engineers.
 - **Objective**: Establish the scalable monorepo architecture, coding standards, CI/CD, and a tight playable test room demonstrating Kael movement, Ashbinder chain combat with Blade head, enemy defeat, Motion Ember extraction, socketing, machine activation, and save/load.
-- **Detailed Spec**: See [Phase 1 Detailed Specification](phase_1_detailed.md).
+- **Detailed Spec**: See [Phase 1 Detailed Specification](phase_1_detailed.md) and [Phase 1 to Phase 2 Transition Plan](engineering/phase_1_to_phase_2_transition_plan.md).
 
 ---
 

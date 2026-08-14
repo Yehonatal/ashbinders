@@ -1,0 +1,14 @@
+{
+  "speaker": "Debug Archivist",
+  "text": "This is a prototype dialogue node testing multi-choice branching and character portraits.",
+  "choices": [
+    {
+      "label": "1. Test positive response",
+      "responseText": "Affirmative. EventBus dispatched test response correctly."
+    },
+    {
+      "label": "2. Test negative response",
+      "responseText": "Closing dialogue sequence and restoring player input state."
+    }
+  ]
+}

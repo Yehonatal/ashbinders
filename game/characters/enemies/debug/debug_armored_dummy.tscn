@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://armored_enemy_scene_01"]
+[gd_scene load_steps=7 format=3 uid="uid://debug_armored_dummy_scene_01"]
 
 [ext_resource type="Script" path="res://characters/enemies/common/ArmoredEnemy.cs" id="1_armored"]
 [ext_resource type="Script" path="res://gameplay/health/HealthComponent.cs" id="2_health"]
@@ -10,7 +10,7 @@ radius = 22.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_hurtbox"]
 radius = 26.0
 
-[node name="ArmoredEnemy" type="CharacterBody2D" node_paths=PackedStringArray("Health")]
+[node name="DebugArmoredDummy" type="CharacterBody2D" node_paths=PackedStringArray("Health")]
 collision_layer = 4
 collision_mask = 1
 script = ExtResource("1_armored")

@@ -103,7 +103,7 @@ Expected output:
 
 ### Step 3: Run the Main Scene
 - Press **F5** (Play Project) or click the **Play** button in the top-right corner.
-- Godot will load the configured starter scene: `res://scenes/test/gym_underlevels.tscn`.
+- Godot will load the configured starter scene: `res://world/regions/underlevels/gym_underlevels.tscn`.
 
 ### Step 4: Controls & Input Mappings
 | Action | Keyboard | Gamepad |

@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://basic_enemy_scene_01"]
+[gd_scene load_steps=8 format=3 uid="uid://debug_combat_dummy_scene_01"]
 
 [ext_resource type="Script" path="res://characters/enemies/common/BasicEnemy.cs" id="1_enemy"]
 [ext_resource type="Script" path="res://gameplay/health/HealthComponent.cs" id="2_health"]
@@ -14,14 +14,14 @@ radius = 18.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_hurtbox"]
 radius = 16.0
 
-[node name="BasicEnemy" type="CharacterBody2D" node_paths=PackedStringArray("Health", "AttackHitbox")]
+[node name="DebugCombatDummy" type="CharacterBody2D" node_paths=PackedStringArray("Health", "AttackHitbox")]
 collision_layer = 4
 collision_mask = 1
 script = ExtResource("1_enemy")
-MoveSpeed = 100.0
-DetectionRadius = 220.0
+MoveSpeed = 80.0
+DetectionRadius = 180.0
 AttackRange = 36.0
-BaseAttackDamage = 10
+BaseAttackDamage = 5
 Health = NodePath("HealthComponent")
 AttackHitbox = NodePath("Hitbox")
 
@@ -33,25 +33,25 @@ offset_left = -12.0
 offset_top = -12.0
 offset_right = 12.0
 offset_bottom = 12.0
-color = Color(0.85, 0.25, 0.2, 1)
+color = Color(0.9, 0.45, 0.1, 1)
 
-[node name="Eye" type="ColorRect" parent="VisualPlaceholder"]
+[node name="DebugCross" type="ColorRect" parent="VisualPlaceholder"]
 layout_mode = 0
-offset_left = 6.0
+offset_left = 10.0
 offset_top = 4.0
-offset_right = 10.0
-offset_bottom = 8.0
-color = Color(1, 0.9, 0.2, 1)
+offset_right = 14.0
+offset_bottom = 20.0
+color = Color(1, 1, 1, 0.8)
 
 [node name="HealthComponent" type="Node" parent="."]
 script = ExtResource("2_health")
-MaxHealth = 40
+MaxHealth = 50
 
 [node name="Hitbox" type="Area2D" parent="."]
 collision_layer = 16
 collision_mask = 0
 script = ExtResource("3_hitbox")
-BaseDamage = 10
+BaseDamage = 5
 
 [node name="HitboxShape" type="CollisionShape2D" parent="Hitbox"]
 shape = SubResource("CircleShape2D_hitbox")

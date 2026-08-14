@@ -17,7 +17,7 @@ radius = 48.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_attack"]
 radius = 36.0
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("Health", "Interactor", "Chain", "ChainSocket")]
+[node name="PlayerKael" type="CharacterBody2D" node_paths=PackedStringArray("Health", "Interactor", "Chain", "ChainSocket")]
 collision_layer = 2
 collision_mask = 1
 script = ExtResource("1_player")

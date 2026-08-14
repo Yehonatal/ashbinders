@@ -12,3 +12,18 @@ script = ExtResource("1_anchor")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_trigger")
+
+[node name="VisualBase" type="ColorRect" parent="."]
+offset_left = -24.0
+offset_top = -24.0
+offset_right = 24.0
+offset_bottom = 24.0
+color = Color(0.2, 0.45, 0.4, 1)
+
+[node name="AnchorRune" type="ColorRect" parent="VisualBase"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 8.0
+offset_right = 32.0
+offset_bottom = 40.0
+color = Color(0.4, 0.9, 0.8, 1)
