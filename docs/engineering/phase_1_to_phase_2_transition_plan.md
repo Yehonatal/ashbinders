@@ -18,6 +18,7 @@ All systems in Phase 1 adhere to strict Architecture Decision Records (ADRs):
 4. **Asset Taxonomy & Resource Schemas** ([ADR-0004](file:///home/yehonatal/Documents/Work/ashbinders/docs/architecture/ADR/ADR-0004-asset-and-resource-conventions.md)): Strict `snake_case` taxonomy with Godot `.tres` data schemas.
 5. **Modular Region Isolation** ([ADR-0005](file:///home/yehonatal/Documents/Work/ashbinders/docs/architecture/ADR/ADR-0005-modular-region-isolation.md)): Autonomous region folders in `game/world/regions/<region_name>/` communicating exclusively via `EventBus` and `WorldState`.
 6. **Prototype & Debug Asset Taxonomy** ([ADR-0006](file:///home/yehonatal/Documents/Work/ashbinders/docs/architecture/ADR/ADR-0006-prototype-and-debug-asset-taxonomy.md)): Formal separation between Canonical Production Placeholders, Developer Debug Fixtures (`debug_*`), and Regional Test Gyms (`gym_<region>.tscn`).
+7. **2.5D Isometric Traversal & Layered Elevation** ([ADR-0007](file:///home/yehonatal/Documents/Work/ashbinders/docs/architecture/ADR/ADR-0007-traversal-mechanics-and-elevation-architecture.md)): Traversal state machine (`Grounded`, `Jumping`, `Climbing`, `Swimming`) and environmental volume interactions.
 
 ---
 

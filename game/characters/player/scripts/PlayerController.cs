@@ -7,6 +7,7 @@ using Ashbinders.Embers.Types;
 using Ashbinders.Gameplay.Damage;
 using Ashbinders.Gameplay.Health;
 using Ashbinders.Gameplay.Interaction;
+using Ashbinders.World.Traversal;
 
 namespace Ashbinders.Characters.Player;
 
@@ -16,27 +17,41 @@ public partial class PlayerController : CharacterBody2D, IDamageable
     [Export] public float BaseMoveSpeed { get; set; } = 220.0f;
     [Export] public float Acceleration { get; set; } = 1600.0f;
     [Export] public float Friction { get; set; } = 1400.0f;
+
+    // Dash
     [Export] public float DashSpeed { get; set; } = 560.0f;
     [Export] public float DashDuration { get; set; } = 0.22f;
     [Export] public float DashCooldown { get; set; } = 0.45f;
-    [Export] public float DashPeakElevation { get; set; } = 12.0f;
+    [Export] public float DashPeakElevation { get; set; } = 10.0f;
 
+    // Jump
+    [Export] public float JumpPeakElevation { get; set; } = 28.0f;
+    [Export] public float JumpDuration { get; set; } = 0.40f;
+    [Export] public float JumpHorizontalSpeed { get; set; } = 240.0f;
+
+    // Nodes
     [Export] public HealthComponent? Health { get; set; }
     [Export] public InteractionDetector? Interactor { get; set; }
     [Export] public AshbinderChain? Chain { get; set; }
     [Export] public EmberSocket? ChainSocket { get; set; }
-
     [Export] public Node2D? VisualsNode { get; set; }
     [Export] public Control? DropShadowNode { get; set; }
 
-    public Vector2 FacingDirection { get; private set; } = new Vector2(1, 0.5f).Normalized(); // Isometric SE default
-    public bool IsDashing { get; private set; }
-    public bool IsInvulnerable => IsDashing;
+    public PlayerState State { get; private set; } = PlayerState.Grounded;
+    public Vector2 FacingDirection { get; private set; } = new Vector2(1, 0.5f).Normalized();
+    public bool IsInvulnerable => State == PlayerState.Dashing;
     public float CurrentElevationZ { get; private set; } = 0.0f;
 
     private double _dashTimer;
     private double _dashCooldownTimer;
     private Vector2 _dashDirection;
+
+    private double _jumpTimer;
+    private Vector2 _jumpVelocity;
+
+    private ClimbableVolume? _activeLadder;
+    private WaterVolume? _activeWater;
+
     private double _attackVisualTimer;
     private Vector2 _initialVisualPosition = Vector2.Zero;
 
@@ -86,19 +101,61 @@ public partial class PlayerController : CharacterBody2D, IDamageable
     public override void _PhysicsProcess(double delta)
     {
         UpdateTimers(delta);
-        HandleActionInputs();
+        HandleGlobalActionInputs();
 
-        if (IsDashing)
+        switch (State)
         {
-            Velocity = _dashDirection * DashSpeed;
-            UpdateDashElevation();
-            MoveAndSlide();
-            QueueRedraw();
+            case PlayerState.Grounded:
+                ProcessGrounded(delta);
+                break;
+            case PlayerState.Dashing:
+                ProcessDashing(delta);
+                break;
+            case PlayerState.Jumping:
+                ProcessJumping(delta);
+                break;
+            case PlayerState.Climbing:
+                ProcessClimbing(delta);
+                break;
+            case PlayerState.Swimming:
+                ProcessSwimming(delta);
+                break;
+            case PlayerState.Hurt:
+                ProcessHurt(delta);
+                break;
+        }
+
+        if (Chain != null)
+        {
+            Chain.Rotation = FacingDirection.Angle();
+        }
+
+        QueueRedraw();
+    }
+
+    private void ProcessGrounded(double delta)
+    {
+        ResetElevation();
+
+        // Check for climbing trigger
+        if (_activeLadder != null && (Input.IsKeyPressed(Key.W) || Input.IsKeyPressed(Key.Up) || Input.IsKeyPressed(Key.S) || Input.IsKeyPressed(Key.Down)))
+        {
+            StartClimbing();
             return;
         }
-        else
+
+        // Check for jump input (Space)
+        if (Input.IsKeyPressed(Key.Space) || Input.IsActionJustPressed("jump"))
         {
-            ResetElevation();
+            PerformJump();
+            return;
+        }
+
+        // Check for dash input (K or Right Click or Shift)
+        if (Input.IsActionJustPressed("dash") || Input.IsKeyPressed(Key.K) || Input.IsKeyPressed(Key.Shift))
+        {
+            PerformDash();
+            return;
         }
 
         var input = GetMovementInput();
@@ -114,13 +171,138 @@ public partial class PlayerController : CharacterBody2D, IDamageable
         }
 
         MoveAndSlide();
+    }
 
-        if (Chain != null)
+    private void ProcessDashing(double delta)
+    {
+        Velocity = _dashDirection * DashSpeed;
+
+        var progress = 1.0f - (float)(_dashTimer / DashDuration);
+        CurrentElevationZ = Mathf.Sin(progress * Mathf.Pi) * DashPeakElevation;
+
+        if (VisualsNode != null)
         {
-            Chain.Rotation = FacingDirection.Angle();
+            VisualsNode.Position = _initialVisualPosition + new Vector2(0, -CurrentElevationZ);
         }
 
-        QueueRedraw();
+        if (DropShadowNode != null)
+        {
+            var shadowScale = 1.0f - (CurrentElevationZ / DashPeakElevation) * 0.25f;
+            DropShadowNode.Scale = new Vector2(shadowScale, shadowScale * 0.5f);
+        }
+
+        MoveAndSlide();
+    }
+
+    private void ProcessJumping(double delta)
+    {
+        Velocity = _jumpVelocity;
+
+        var progress = 1.0f - (float)(_jumpTimer / JumpDuration); // 0.0 to 1.0
+        CurrentElevationZ = 4.0f * JumpPeakElevation * progress * (1.0f - progress);
+
+        if (VisualsNode != null)
+        {
+            VisualsNode.Position = _initialVisualPosition + new Vector2(0, -CurrentElevationZ);
+        }
+
+        if (DropShadowNode != null)
+        {
+            var shadowScale = 1.0f - (CurrentElevationZ / JumpPeakElevation) * 0.45f;
+            DropShadowNode.Scale = new Vector2(shadowScale, shadowScale * 0.5f);
+        }
+
+        MoveAndSlide();
+
+        if (_jumpTimer <= 0.0)
+        {
+            ResetElevation();
+            State = _activeWater != null ? PlayerState.Swimming : PlayerState.Grounded;
+        }
+    }
+
+    private void ProcessClimbing(double delta)
+    {
+        ResetElevation();
+
+        if (_activeLadder == null)
+        {
+            State = PlayerState.Grounded;
+            return;
+        }
+
+        // Lock X-position to ladder center
+        GlobalPosition = new Vector2(_activeLadder.GlobalPosition.X, GlobalPosition.Y);
+
+        float climbInputY = 0.0f;
+        if (Input.IsKeyPressed(Key.W) || Input.IsKeyPressed(Key.Up)) climbInputY -= 1.0f;
+        if (Input.IsKeyPressed(Key.S) || Input.IsKeyPressed(Key.Down)) climbInputY += 1.0f;
+
+        Velocity = new Vector2(0, climbInputY * _activeLadder.ClimbSpeed);
+        MoveAndSlide();
+
+        // Check top ledge dismount
+        if (GlobalPosition.Y <= _activeLadder.TopLedgeGlobalPosition.Y)
+        {
+            GlobalPosition = _activeLadder.TopLedgeGlobalPosition;
+            State = PlayerState.Grounded;
+            EventBus.Publish(new ToastNotificationEvent("Ascended to High Ledge"));
+            return;
+        }
+
+        // Check bottom floor dismount
+        if (GlobalPosition.Y >= _activeLadder.BottomFloorGlobalPosition.Y)
+        {
+            GlobalPosition = _activeLadder.BottomFloorGlobalPosition;
+            State = PlayerState.Grounded;
+            return;
+        }
+
+        // Jump dismount
+        if (Input.IsKeyPressed(Key.Space) || Input.IsActionJustPressed("dash"))
+        {
+            State = PlayerState.Grounded;
+            Velocity = new Vector2(0, 100.0f);
+        }
+    }
+
+    private void ProcessSwimming(double delta)
+    {
+        ResetElevation();
+
+        // Slightly submerge visual torso in water
+        if (VisualsNode != null)
+        {
+            VisualsNode.Position = _initialVisualPosition + new Vector2(0, 6.0f);
+        }
+
+        if (Input.IsActionJustPressed("dash") || Input.IsKeyPressed(Key.K) || Input.IsKeyPressed(Key.Shift))
+        {
+            PerformDash();
+            return;
+        }
+
+        var input = GetMovementInput();
+        var swimSpeed = CalculateCurrentMoveSpeed() * (_activeWater?.WaterSpeedMultiplier ?? 0.6f);
+
+        if (input.LengthSquared() > 0.01f)
+        {
+            FacingDirection = QuantizeToIsometricDirection(input);
+            Velocity = Velocity.MoveToward(input * swimSpeed + (_activeWater?.WaterCurrent ?? Vector2.Zero), (float)(Acceleration * 0.8f * delta));
+        }
+        else
+        {
+            Velocity = Velocity.MoveToward(_activeWater?.WaterCurrent ?? Vector2.Zero, (float)(Friction * 0.8f * delta));
+        }
+
+        MoveAndSlide();
+    }
+
+    private void ProcessHurt(double delta)
+    {
+        ResetElevation();
+        Velocity = Velocity.MoveToward(Vector2.Zero, (float)(Friction * delta));
+        MoveAndSlide();
     }
 
     private Vector2 GetMovementInput()
@@ -159,23 +341,6 @@ public partial class PlayerController : CharacterBody2D, IDamageable
         return bestDir;
     }
 
-    private void UpdateDashElevation()
-    {
-        var progress = 1.0f - (float)(_dashTimer / DashDuration); // 0.0 to 1.0
-        CurrentElevationZ = Mathf.Sin(progress * Mathf.Pi) * DashPeakElevation;
-
-        if (VisualsNode != null)
-        {
-            VisualsNode.Position = _initialVisualPosition + new Vector2(0, -CurrentElevationZ);
-        }
-
-        if (DropShadowNode != null)
-        {
-            var shadowScale = 1.0f - (CurrentElevationZ / DashPeakElevation) * 0.25f;
-            DropShadowNode.Scale = new Vector2(shadowScale, shadowScale * 0.5f);
-        }
-    }
-
     private void ResetElevation()
     {
         CurrentElevationZ = 0.0f;
@@ -189,16 +354,11 @@ public partial class PlayerController : CharacterBody2D, IDamageable
         }
     }
 
-    private void HandleActionInputs()
+    private void HandleGlobalActionInputs()
     {
         if (Input.IsActionJustPressed("attack") || Input.IsKeyPressed(Key.J) || Input.IsMouseButtonPressed(MouseButton.Left))
         {
             PerformAttack();
-        }
-
-        if (Input.IsActionJustPressed("dash") || Input.IsKeyPressed(Key.K) || Input.IsKeyPressed(Key.Space))
-        {
-            PerformDash();
         }
 
         if (Input.IsActionJustPressed("interact") || Input.IsKeyPressed(Key.E))
@@ -231,8 +391,13 @@ public partial class PlayerController : CharacterBody2D, IDamageable
             _dashTimer -= delta;
             if (_dashTimer <= 0.0)
             {
-                IsDashing = false;
+                State = _activeWater != null ? PlayerState.Swimming : PlayerState.Grounded;
             }
+        }
+
+        if (_jumpTimer > 0.0)
+        {
+            _jumpTimer = Math.Max(0.0, _jumpTimer - delta);
         }
 
         if (_dashCooldownTimer > 0.0)
@@ -248,7 +413,7 @@ public partial class PlayerController : CharacterBody2D, IDamageable
 
     public bool PerformAttack()
     {
-        if (IsDashing || Chain == null) return false;
+        if (State == PlayerState.Climbing || Chain == null) return false;
         var success = Chain.TryAttack(FacingDirection);
         if (success)
         {
@@ -259,13 +424,69 @@ public partial class PlayerController : CharacterBody2D, IDamageable
 
     public bool PerformDash()
     {
-        if (IsDashing || _dashCooldownTimer > 0.0) return false;
+        if (State == PlayerState.Climbing || _dashCooldownTimer > 0.0) return false;
 
-        IsDashing = true;
+        State = PlayerState.Dashing;
         _dashTimer = DashDuration;
         _dashCooldownTimer = DashCooldown;
         _dashDirection = Velocity.LengthSquared() > 0.01f ? Velocity.Normalized() : FacingDirection;
         return true;
+    }
+
+    public bool PerformJump()
+    {
+        if (State != PlayerState.Grounded) return false;
+
+        State = PlayerState.Jumping;
+        _jumpTimer = JumpDuration;
+        var input = GetMovementInput();
+        _jumpVelocity = input.LengthSquared() > 0.01f ? input * JumpHorizontalSpeed : FacingDirection * (JumpHorizontalSpeed * 0.5f);
+        return true;
+    }
+
+    public void StartClimbing()
+    {
+        if (_activeLadder == null) return;
+        State = PlayerState.Climbing;
+        Velocity = Vector2.Zero;
+    }
+
+    public void OnAreaEntered(Area2D area)
+    {
+        if (area is ClimbableVolume ladder)
+        {
+            _activeLadder = ladder;
+        }
+        else if (area is WaterVolume water)
+        {
+            _activeWater = water;
+            if (State == PlayerState.Grounded)
+            {
+                State = PlayerState.Swimming;
+                EventBus.Publish(new ToastNotificationEvent("Entered Flooded Basin (Swimming)"));
+            }
+        }
+    }
+
+    public void OnAreaExited(Area2D area)
+    {
+        if (area == _activeLadder)
+        {
+            _activeLadder = null;
+            if (State == PlayerState.Climbing)
+            {
+                State = PlayerState.Grounded;
+            }
+        }
+        else if (area == _activeWater)
+        {
+            _activeWater = null;
+            if (State == PlayerState.Swimming)
+            {
+                State = PlayerState.Grounded;
+                EventBus.Publish(new ToastNotificationEvent("Exited Water Basin"));
+            }
+        }
     }
 
     public void TakeDamage(DamageInfo damage)
@@ -273,6 +494,7 @@ public partial class PlayerController : CharacterBody2D, IDamageable
         if (IsInvulnerable || Health == null) return;
         Health.ApplyDamage(damage.Amount);
         Velocity += damage.Knockback;
+        State = PlayerState.Hurt;
     }
 
     public override void _Draw()
@@ -283,16 +505,23 @@ public partial class PlayerController : CharacterBody2D, IDamageable
             var attackOffset = FacingDirection * 38.0f;
             var color = new Color(1.0f, 0.75f, 0.2f, (float)(_attackVisualTimer / 0.18) * 0.7f);
             
-            // Draw 2:1 isometric arc
             DrawArc(attackOffset, 28.0f, FacingDirection.Angle() - 1.0f, FacingDirection.Angle() + 1.0f, 16, color, 4.0f);
             DrawCircle(attackOffset + FacingDirection * 8.0f, 8.0f, new Color(1.0f, 0.9f, 0.4f, (float)(_attackVisualTimer / 0.18)));
         }
 
         // Kinetic Dash Ghost Silhouette
-        if (IsDashing)
+        if (State == PlayerState.Dashing)
         {
             var ghostColor = new Color(0.3f, 0.7f, 1.0f, 0.45f);
             DrawArc(Vector2.Zero, 16.0f, 0, Mathf.Tau, 16, ghostColor, 2.5f);
+        }
+
+        // Swimming Surface Ripple Rings
+        if (State == PlayerState.Swimming)
+        {
+            var rippleAlpha = (float)(Math.Sin(Time.GetTicksMsec() * 0.006) * 0.25 + 0.5);
+            DrawArc(Vector2.Zero, 18.0f, 0, Mathf.Tau, 16, new Color(0.4f, 0.85f, 1.0f, rippleAlpha), 2.0f);
+            DrawArc(Vector2.Zero, 26.0f, 0, Mathf.Tau, 16, new Color(0.3f, 0.7f, 0.9f, rippleAlpha * 0.5f), 1.5f);
         }
     }
 }

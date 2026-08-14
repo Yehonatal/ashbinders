@@ -13,13 +13,14 @@
 - Clean monorepo structure with decoupled domain folders.
 - CI/CD pipelines for automated compilation, unit testing, and asset checks.
 - Kael character controller (8-way movement, acceleration, friction, facing direction, dash).
+- Traversal system with PlayerState FSM (Jumping with Z-elevation & shadow scaling, Climbing ladders/scaffolding, Swimming/Wading in water volumes).
 - Smooth follow camera with bounding box.
 - Generic interaction framework (`IInteractable`, `InteractionDetector`).
 - Modular Ashbinder Chain weapon framework with functional `BladeHead`.
 - One enemy creature with FSM (`Idle`, `Detect`, `Chase`, `Attack`, `Hurt`, `Death`).
 - Motion Ember extraction, chain socketing, and dash-attack enhancement.
 - Ancient Ember Device accepting Motion Ember to activate world geometry.
-- Single Underlevels-inspired test arena connecting combat, extraction, machine activation, and path opening.
+- Single Underlevels-inspired test arena connecting combat, extraction, machine activation, climbing, water pool, and path opening.
 - Schema-versioned Save/Load system persisting player stats, socketed embers, and world state.
 
 ### Explicitly OUT of Scope
@@ -46,7 +47,9 @@
 | **1.8** | Ember Machine | 2 | Engineer B | `AncientEmberDevice`, power-routing, bridge/gate extension |
 | **1.9** | Test Arena Gym | 3 | Engineer B | Underlevels-themed graybox level with combat & puzzle rooms |
 | **1.10**| Save/Load System | 2 | Engineer A | JSON persistence for player, embers, and machine states |
-| **1.11**| Integration & Playtesting | 4 | Both | End-to-end bug fixing, tuning game feel, definition of done |
+| **1.11**| Traversal & State Machine | 3 | Engineer A | `PlayerState` FSM, Jumping, Climbing ladder, Water volume |
+| **1.12**| Integration & Playtesting | 4 | Both | End-to-end bug fixing, tuning game feel, definition of done |
+
 
 ---
 

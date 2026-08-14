@@ -91,6 +91,9 @@ socket_ember={
 2d_physics/layer_4="PlayerHitbox"
 2d_physics/layer_5="EnemyHitbox"
 2d_physics/layer_6="Interactables"
+2d_physics/layer_7="LowObstacles"
+2d_physics/layer_8="WaterVolumes"
+2d_physics/layer_9="TraversalVolumes"
 
 [rendering]
 
