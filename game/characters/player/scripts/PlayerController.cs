@@ -27,7 +27,7 @@ public partial class PlayerController : CharacterBody2D, IDamageable
     [Export] public EmberSocket? ChainSocket { get; set; }
 
     [Export] public Node2D? VisualsNode { get; set; }
-    [Export] public CanvasItem? DropShadowNode { get; set; }
+    [Export] public Control? DropShadowNode { get; set; }
 
     public Vector2 FacingDirection { get; private set; } = new Vector2(1, 0.5f).Normalized(); // Isometric SE default
     public bool IsDashing { get; private set; }
@@ -41,14 +41,14 @@ public partial class PlayerController : CharacterBody2D, IDamageable
     private Vector2 _initialVisualPosition = Vector2.Zero;
 
     // 8 Isometric Standard Facing Vectors (2:1 dimetric projection)
-    private static readonly Vector2 IsoNorth     = new(0.0f, -1.0f);
-    private static readonly Vector2 IsoNorthEast = new(1.0f, -0.5f).Normalized();
-    private static readonly Vector2 IsoEast      = new(1.0f, 0.0f);
-    private static readonly Vector2 IsoSouthEast = new(1.0f, 0.5f).Normalized();
-    private static readonly Vector2 IsoSouth     = new(0.0f, 1.0f);
-    private static readonly Vector2 IsoSouthWest = new(-1.0f, 0.5f).Normalized();
-    private static readonly Vector2 IsoWest      = new(-1.0f, 0.0f);
-    private static readonly Vector2 IsoNorthWest = new(-1.0f, -0.5f).Normalized();
+    private static readonly Vector2 IsoNorth     = new Vector2(0.0f, -1.0f);
+    private static readonly Vector2 IsoNorthEast = new Vector2(1.0f, -0.5f).Normalized();
+    private static readonly Vector2 IsoEast      = new Vector2(1.0f, 0.0f);
+    private static readonly Vector2 IsoSouthEast = new Vector2(1.0f, 0.5f).Normalized();
+    private static readonly Vector2 IsoSouth     = new Vector2(0.0f, 1.0f);
+    private static readonly Vector2 IsoSouthWest = new Vector2(-1.0f, 0.5f).Normalized();
+    private static readonly Vector2 IsoWest      = new Vector2(-1.0f, 0.0f);
+    private static readonly Vector2 IsoNorthWest = new Vector2(-1.0f, -0.5f).Normalized();
 
     private static readonly Vector2[] IsoDirections = new[]
     {
@@ -65,7 +65,7 @@ public partial class PlayerController : CharacterBody2D, IDamageable
         Chain ??= GetNodeOrNull<AshbinderChain>("AshbinderChain");
         ChainSocket ??= GetNodeOrNull<EmberSocket>("EmberSocket");
         VisualsNode ??= GetNodeOrNull<Node2D>("Visuals");
-        DropShadowNode ??= GetNodeOrNull<CanvasItem>("DropShadow");
+        DropShadowNode ??= GetNodeOrNull<Control>("DropShadow");
 
         if (VisualsNode != null)
         {

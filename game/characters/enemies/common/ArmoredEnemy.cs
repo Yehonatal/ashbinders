@@ -26,7 +26,7 @@ public partial class ArmoredEnemy : CharacterBody2D, IDamageable
     [Export] public Ember? DroppedEmberOnDeath { get; set; }
 
     [Export] public Node2D? VisualsNode { get; set; }
-    [Export] public CanvasItem? DropShadowNode { get; set; }
+    [Export] public Control? DropShadowNode { get; set; }
 
     public EnemyState State { get; private set; } = EnemyState.Idle;
     public Node2D? Target { get; set; }
@@ -39,7 +39,7 @@ public partial class ArmoredEnemy : CharacterBody2D, IDamageable
     {
         Health ??= GetNodeOrNull<HealthComponent>("HealthComponent");
         VisualsNode ??= GetNodeOrNull<Node2D>("Visuals");
-        DropShadowNode ??= GetNodeOrNull<CanvasItem>("DropShadow");
+        DropShadowNode ??= GetNodeOrNull<Control>("DropShadow");
 
         if (Health != null)
         {
