@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://universal_debug_gym_scene_01"]
+[gd_scene load_steps=15 format=3 uid="uid://universal_debug_gym_scene_01"]
 
 [ext_resource type="PackedScene" path="res://characters/player/player_kael.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://characters/enemies/debug/debug_combat_dummy.tscn" id="2_combat_dummy"]
@@ -9,10 +9,12 @@
 [ext_resource type="PackedScene" path="res://ui/hud/hud.tscn" id="7_hud"]
 [ext_resource type="PackedScene" path="res://ui/dialogue/dialogue_modal.tscn" id="8_dialogue"]
 [ext_resource type="PackedScene" path="res://ui/debug/test_mode_info_window.tscn" id="9_infowin"]
-[ext_resource type="Shader" path="res://rendering/shaders/isometric_floor.gdshader" id="10_floor_shader"]
+[ext_resource type="PackedScene" path="res://world/traversal/ladder_industrial.tscn" id="10_ladder"]
+[ext_resource type="PackedScene" path="res://world/traversal/water_pool_underlevels.tscn" id="11_water"]
+[ext_resource type="Shader" path="res://rendering/shaders/isometric_floor.gdshader" id="12_floor_shader"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_floor"]
-shader = ExtResource("10_floor_shader")
+shader = ExtResource("12_floor_shader")
 shader_parameter/base_color = Color(0.05, 0.06, 0.08, 1)
 shader_parameter/tile_color = Color(0.08, 0.1, 0.14, 1)
 shader_parameter/grid_line_color = Color(0.15, 0.18, 0.24, 1)
@@ -91,6 +93,12 @@ offset_right = 1596.0
 offset_bottom = 996.0
 mouse_filter = 2
 color = Color(0.26, 0.3, 0.38, 1)
+
+[node name="Ladder" parent="." instance=ExtResource("10_ladder")]
+position = Vector2(350, 250)
+
+[node name="WaterPool" parent="." instance=ExtResource("11_water")]
+position = Vector2(350, 750)
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
 position = Vector2(200, 500)

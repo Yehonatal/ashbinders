@@ -1,0 +1,103 @@
+[gd_scene load_steps=5 format=3 uid="uid://ladder_industrial_scene_01"]
+
+[ext_resource type="Script" path="res://world/traversal/ClimbableVolume.cs" id="1_climb"]
+[ext_resource type="Shader" path="res://rendering/shaders/drop_shadow.gdshader" id="2_shadow"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_shadow"]
+shader = ExtResource("2_shadow")
+shader_parameter/shadow_color = Color(0.02, 0.03, 0.05, 0.7)
+shader_parameter/softness = 0.45
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ladder_trigger"]
+size = Vector2(28, 120)
+
+[node name="LadderIndustrial" type="Node2D"]
+y_sort_enabled = true
+
+[node name="BaseShadow" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_shadow")
+offset_left = -18.0
+offset_top = -8.0
+offset_right = 18.0
+offset_bottom = 8.0
+mouse_filter = 2
+
+[node name="Visuals" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="LeftRail" type="ColorRect" parent="Visuals"]
+offset_left = -12.0
+offset_top = -120.0
+offset_right = -8.0
+offset_bottom = 0.0
+mouse_filter = 2
+color = Color(0.35, 0.38, 0.45, 1)
+
+[node name="RightRail" type="ColorRect" parent="Visuals"]
+offset_left = 8.0
+offset_top = -120.0
+offset_right = 12.0
+offset_bottom = 0.0
+mouse_filter = 2
+color = Color(0.48, 0.52, 0.6, 1)
+
+[node name="Rung1" type="ColorRect" parent="Visuals"]
+offset_left = -8.0
+offset_top = -18.0
+offset_right = 8.0
+offset_bottom = -14.0
+mouse_filter = 2
+color = Color(0.65, 0.7, 0.8, 1)
+
+[node name="Rung2" type="ColorRect" parent="Visuals"]
+offset_left = -8.0
+offset_top = -38.0
+offset_right = 8.0
+offset_bottom = -34.0
+mouse_filter = 2
+color = Color(0.65, 0.7, 0.8, 1)
+
+[node name="Rung3" type="ColorRect" parent="Visuals"]
+offset_left = -8.0
+offset_top = -58.0
+offset_right = 8.0
+offset_bottom = -54.0
+mouse_filter = 2
+color = Color(0.65, 0.7, 0.8, 1)
+
+[node name="Rung4" type="ColorRect" parent="Visuals"]
+offset_left = -8.0
+offset_top = -78.0
+offset_right = 8.0
+offset_bottom = -74.0
+mouse_filter = 2
+color = Color(0.65, 0.7, 0.8, 1)
+
+[node name="Rung5" type="ColorRect" parent="Visuals"]
+offset_left = -8.0
+offset_top = -98.0
+offset_right = 8.0
+offset_bottom = -94.0
+mouse_filter = 2
+color = Color(0.65, 0.7, 0.8, 1)
+
+[node name="Rung6" type="ColorRect" parent="Visuals"]
+offset_left = -8.0
+offset_top = -118.0
+offset_right = 8.0
+offset_bottom = -114.0
+mouse_filter = 2
+color = Color(0.65, 0.7, 0.8, 1)
+
+[node name="ClimbableVolume" type="Area2D" parent="."]
+position = Vector2(0, -60)
+collision_layer = 256
+collision_mask = 2
+script = ExtResource("1_climb")
+LadderHeight = 120.0
+ClimbSpeed = 140.0
+TopLedgeOffset = Vector2(0, -135)
+BottomFloorOffset = Vector2(0, 10)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ClimbableVolume"]
+shape = SubResource("RectangleShape2D_ladder_trigger")
