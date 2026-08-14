@@ -1,6 +1,7 @@
 using System;
 using Godot;
 using Ashbinders.Combat.Hitboxes;
+using Ashbinders.Core.Events;
 using Ashbinders.Embers.Core;
 using Ashbinders.Embers.Types;
 using Ashbinders.Gameplay.Damage;
@@ -8,29 +9,20 @@ using Ashbinders.Gameplay.Health;
 
 namespace Ashbinders.Characters.Enemies.Common;
 
-public enum EnemyState
-{
-    Idle,
-    Chase,
-    Attack,
-    Hurt,
-    Dead
-}
-
 [GlobalClass]
-public partial class BasicEnemy : CharacterBody2D, IDamageable
+public partial class ArmoredEnemy : CharacterBody2D, IDamageable
 {
     [Signal]
-    public delegate void DefeatedEventHandler(BasicEnemy enemy);
+    public delegate void DefeatedEventHandler(ArmoredEnemy enemy);
 
-    [Export] public float MoveSpeed { get; set; } = 110.0f;
-    [Export] public float DetectionRadius { get; set; } = 280.0f;
-    [Export] public float AttackRange { get; set; } = 40.0f;
-    [Export] public int BaseAttackDamage { get; set; } = 10;
-    [Export] public float AttackCooldown { get; set; } = 1.2f;
+    [Export] public float MoveSpeed { get; set; } = 70.0f;
+    [Export] public float DetectionRadius { get; set; } = 240.0f;
+    [Export] public float AttackRange { get; set; } = 50.0f;
+    [Export] public int BaseAttackDamage { get; set; } = 22;
+    [Export] public float AttackCooldown { get; set; } = 1.8f;
+    [Export] public bool HasArmor { get; set; } = true;
 
     [Export] public HealthComponent? Health { get; set; }
-    [Export] public Hitbox? AttackHitbox { get; set; }
     [Export] public Ember? DroppedEmberOnDeath { get; set; }
 
     public EnemyState State { get; private set; } = EnemyState.Idle;
@@ -43,19 +35,13 @@ public partial class BasicEnemy : CharacterBody2D, IDamageable
     public override void _Ready()
     {
         Health ??= GetNodeOrNull<HealthComponent>("HealthComponent");
-        AttackHitbox ??= GetNodeOrNull<Hitbox>("Hitbox");
-        DroppedEmberOnDeath ??= new MotionEmber();
-
         if (Health != null)
         {
+            Health.SetHealthDirectly(120, 120);
             Health.Died += OnDied;
         }
 
-        if (AttackHitbox != null)
-        {
-            AttackHitbox.AttackerNode = this;
-            AttackHitbox.BaseDamage = BaseAttackDamage;
-        }
+        DroppedEmberOnDeath ??= new GuardEmber();
     }
 
     public override void _PhysicsProcess(double delta)
@@ -131,7 +117,7 @@ public partial class BasicEnemy : CharacterBody2D, IDamageable
         if (distance <= AttackRange && _attackTimer <= 0.0)
         {
             State = EnemyState.Attack;
-            _attackWindupTimer = 0.3;
+            _attackWindupTimer = 0.5;
             return;
         }
 
@@ -152,7 +138,7 @@ public partial class BasicEnemy : CharacterBody2D, IDamageable
                     if (Target is IDamageable damageable)
                     {
                         var dir = (Target.GlobalPosition - GlobalPosition).Normalized();
-                        damageable.TakeDamage(new DamageInfo(BaseAttackDamage, DamageType.Physical, dir * 180.0f, this));
+                        damageable.TakeDamage(new DamageInfo(BaseAttackDamage, DamageType.Physical, dir * 250.0f, this));
                     }
                 }
                 _attackTimer = AttackCooldown;
@@ -163,17 +149,33 @@ public partial class BasicEnemy : CharacterBody2D, IDamageable
 
     private void ProcessHurt()
     {
-        Velocity = Velocity.MoveToward(Vector2.Zero, 600.0f * (float)GetPhysicsProcessDeltaTime());
+        Velocity = Velocity.MoveToward(Vector2.Zero, 400.0f * (float)GetPhysicsProcessDeltaTime());
     }
 
     public void TakeDamage(DamageInfo damage)
     {
         if (State == EnemyState.Dead || Health == null) return;
 
-        Health.ApplyDamage(damage.Amount);
-        Velocity = damage.Knockback;
+        int finalDamage = damage.Amount;
+
+        if (HasArmor)
+        {
+            if (damage.BreaksArmor)
+            {
+                HasArmor = false;
+                EventBus.Publish(new ToastNotificationEvent("ARMOR SHATTERED! (Hammer Head Impact)"));
+            }
+            else
+            {
+                finalDamage = Math.Max(2, damage.Amount / 5);
+                EventBus.Publish(new ToastNotificationEvent("Attack Deflected by Armor! (Use Hammer Head)"));
+            }
+        }
+
+        Health.ApplyDamage(finalDamage);
+        Velocity = damage.Knockback * (HasArmor ? 0.3f : 1.0f);
         State = EnemyState.Hurt;
-        _hitstunTimer = 0.2f;
+        _hitstunTimer = 0.25f;
     }
 
     private void OnDied()
@@ -181,7 +183,6 @@ public partial class BasicEnemy : CharacterBody2D, IDamageable
         State = EnemyState.Dead;
         Velocity = Vector2.Zero;
 
-        // Spawn EmberPickup in parent scene
         var pickup = new EmberPickup();
         if (DroppedEmberOnDeath != null)
         {
@@ -196,20 +197,21 @@ public partial class BasicEnemy : CharacterBody2D, IDamageable
 
     public override void _Draw()
     {
-        if (State == EnemyState.Hurt)
+        var color = HasArmor ? new Color(0.4f, 0.45f, 0.55f) : new Color(0.7f, 0.2f, 0.2f);
+        if (State == EnemyState.Hurt) color = Colors.White;
+
+        DrawCircle(Vector2.Zero, 22.0f, color);
+
+        if (HasArmor)
         {
-            DrawCircle(Vector2.Zero, 16.0f, Colors.White);
-        }
-        else if (State == EnemyState.Attack)
-        {
-            DrawCircle(Vector2.Zero, 20.0f, new Color(1.0f, 0.2f, 0.2f, 0.5f));
+            DrawArc(Vector2.Zero, 26.0f, 0, Mathf.Tau, 24, new Color(0.9f, 0.95f, 1.0f), 3.0f);
         }
 
         if (Health != null && Health.CurrentHealth < Health.MaxHealth)
         {
             var hpRatio = (float)Health.CurrentHealth / Health.MaxHealth;
-            DrawRect(new Rect2(-16, -24, 32, 4), new Color(0.2f, 0.2f, 0.2f));
-            DrawRect(new Rect2(-16, -24, 32 * hpRatio, 4), new Color(0.9f, 0.2f, 0.2f));
+            DrawRect(new Rect2(-20, -32, 40, 5), new Color(0.2f, 0.2f, 0.2f));
+            DrawRect(new Rect2(-20, -32, 40 * hpRatio, 5), HasArmor ? new Color(0.3f, 0.6f, 0.9f) : new Color(0.9f, 0.2f, 0.2f));
         }
     }
 }

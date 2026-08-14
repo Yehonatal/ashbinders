@@ -1,83 +1,95 @@
-[gd_scene load_steps=8 format=3 uid="uid://gym_underlevels_scene_01"]
+[gd_scene load_steps=12 format=3 uid="uid://gym_underlevels_scene_01"]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1_player"]
-[ext_resource type="PackedScene" path="res://scenes/enemies/basic_enemy.tscn" id="2_enemy"]
-[ext_resource type="PackedScene" path="res://scenes/world/ancient_ember_device.tscn" id="3_device"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/basic_enemy.tscn" id="2_basic_enemy"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/armored_enemy.tscn" id="3_armored_enemy"]
+[ext_resource type="PackedScene" path="res://scenes/world/npc_character.tscn" id="4_npc"]
+[ext_resource type="PackedScene" path="res://scenes/world/ancient_ember_device.tscn" id="5_device"]
+[ext_resource type="PackedScene" path="res://scenes/world/ember_gate.tscn" id="6_gate"]
+[ext_resource type="PackedScene" path="res://scenes/world/ancient_save_anchor.tscn" id="7_anchor"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="8_hud"]
+[ext_resource type="PackedScene" path="res://scenes/ui/dialogue_modal.tscn" id="9_dialogue"]
+[ext_resource type="PackedScene" path="res://scenes/ui/test_mode_info_window.tscn" id="10_infowin"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_horiz"]
-size = Vector2(1280, 32)
+size = Vector2(2400, 32)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_vert"]
-size = Vector2(32, 720)
+size = Vector2(32, 1200)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_pillar"]
 size = Vector2(64, 64)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_gate"]
-size = Vector2(32, 160)
-
 [node name="UnderlevelsGym" type="Node2D"]
 
 [node name="FloorBackground" type="ColorRect" parent="."]
-offset_right = 1280.0
-offset_bottom = 720.0
+offset_right = 2400.0
+offset_bottom = 1200.0
 mouse_filter = 2
-color = Color(0.08, 0.09, 0.11, 1)
+color = Color(0.06, 0.07, 0.09, 1)
 
-[node name="GridPattern" type="ColorRect" parent="."]
+[node name="CombatAreaFloor" type="ColorRect" parent="."]
 offset_left = 64.0
 offset_top = 64.0
-offset_right = 1216.0
-offset_bottom = 656.0
+offset_right = 1150.0
+offset_bottom = 1136.0
 mouse_filter = 2
-color = Color(0.12, 0.14, 0.17, 1)
+color = Color(0.1, 0.12, 0.15, 1)
 
-[node name="ChamberDivider" type="ColorRect" parent="."]
-offset_left = 800.0
+[node name="JunctionAreaFloor" type="ColorRect" parent="."]
+offset_left = 1150.0
 offset_top = 64.0
-offset_right = 832.0
-offset_bottom = 280.0
+offset_right = 1750.0
+offset_bottom = 1136.0
 mouse_filter = 2
-color = Color(0.2, 0.22, 0.26, 1)
+color = Color(0.12, 0.14, 0.18, 1)
+
+[node name="VaultAreaFloor" type="ColorRect" parent="."]
+offset_left = 1750.0
+offset_top = 64.0
+offset_right = 2336.0
+offset_bottom = 1136.0
+mouse_filter = 2
+color = Color(0.16, 0.15, 0.12, 1)
+
+[node name="ChamberDividerUpper" type="ColorRect" parent="."]
+offset_left = 1750.0
+offset_top = 64.0
+offset_right = 1782.0
+offset_bottom = 500.0
+mouse_filter = 2
+color = Color(0.25, 0.28, 0.32, 1)
 
 [node name="ChamberDividerLower" type="ColorRect" parent="."]
-offset_left = 800.0
-offset_top = 440.0
-offset_right = 832.0
-offset_bottom = 656.0
+offset_left = 1750.0
+offset_top = 700.0
+offset_right = 1782.0
+offset_bottom = 1136.0
 mouse_filter = 2
-color = Color(0.2, 0.22, 0.26, 1)
+color = Color(0.25, 0.28, 0.32, 1)
 
 [node name="ArenaWalls" type="StaticBody2D" parent="."]
 collision_layer = 1
 collision_mask = 0
 
 [node name="WallNorth" type="CollisionShape2D" parent="ArenaWalls"]
-position = Vector2(640, 16)
+position = Vector2(1200, 16)
 shape = SubResource("RectangleShape2D_wall_horiz")
 
 [node name="WallSouth" type="CollisionShape2D" parent="ArenaWalls"]
-position = Vector2(640, 704)
+position = Vector2(1200, 1184)
 shape = SubResource("RectangleShape2D_wall_horiz")
 
 [node name="WallWest" type="CollisionShape2D" parent="ArenaWalls"]
-position = Vector2(16, 360)
+position = Vector2(16, 600)
 shape = SubResource("RectangleShape2D_wall_vert")
 
 [node name="WallEast" type="CollisionShape2D" parent="ArenaWalls"]
-position = Vector2(1264, 360)
+position = Vector2(2384, 600)
 shape = SubResource("RectangleShape2D_wall_vert")
 
-[node name="DividerUpperCol" type="CollisionShape2D" parent="ArenaWalls"]
-position = Vector2(816, 172)
-shape = SubResource("RectangleShape2D_gate")
-
-[node name="DividerLowerCol" type="CollisionShape2D" parent="ArenaWalls"]
-position = Vector2(816, 548)
-shape = SubResource("RectangleShape2D_gate")
-
 [node name="PillarA" type="CollisionShape2D" parent="ArenaWalls"]
-position = Vector2(384, 240)
+position = Vector2(500, 400)
 shape = SubResource("RectangleShape2D_pillar")
 
 [node name="PillarAVisual" type="ColorRect" parent="ArenaWalls/PillarA"]
@@ -89,7 +101,7 @@ mouse_filter = 2
 color = Color(0.22, 0.25, 0.3, 1)
 
 [node name="PillarB" type="CollisionShape2D" parent="ArenaWalls"]
-position = Vector2(384, 480)
+position = Vector2(500, 800)
 shape = SubResource("RectangleShape2D_pillar")
 
 [node name="PillarBVisual" type="ColorRect" parent="ArenaWalls/PillarB"]
@@ -101,31 +113,35 @@ mouse_filter = 2
 color = Color(0.22, 0.25, 0.3, 1)
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
-position = Vector2(180, 360)
+position = Vector2(200, 600)
 
-[node name="BasicEnemy" parent="." instance=ExtResource("2_enemy")]
-position = Vector2(560, 360)
+[node name="BasicEnemy1" parent="." instance=ExtResource("2_basic_enemy")]
+position = Vector2(700, 400)
 
-[node name="AncientEmberDevice" parent="." instance=ExtResource("3_device")]
-position = Vector2(740, 240)
+[node name="BasicEnemy2" parent="." instance=ExtResource("2_basic_enemy")]
+position = Vector2(850, 750)
 
-[node name="HUD" type="CanvasLayer" parent="."]
+[node name="ArmoredEnemy1" parent="." instance=ExtResource("3_armored_enemy")]
+position = Vector2(950, 500)
 
-[node name="TitleLabel" type="Label" parent="HUD"]
-offset_left = 24.0
-offset_top = 20.0
-offset_right = 500.0
-offset_bottom = 46.0
-mouse_filter = 2
-text = "ASHBINDERS — Phase 1 Prototype (Underlevels Gym)"
+[node name="ArmoredEnemy2" parent="." instance=ExtResource("3_armored_enemy")]
+position = Vector2(600, 900)
 
-[node name="ControlsPanel" type="Label" parent="HUD"]
-offset_left = 24.0
-offset_top = 50.0
-offset_right = 500.0
-offset_bottom = 140.0
-mouse_filter = 2
-text = "W/A/S/D or Arrow Keys: Move
-J or Left Click: Attack (Ashbinder Chain)
-K or Space: Dash (Kinetic Burst)
-E: Extract Ember from Enemy / Insert into Device"
+[node name="NpcCharacter" parent="." instance=ExtResource("4_npc")]
+position = Vector2(1350, 350)
+
+[node name="EmberGate" parent="." instance=ExtResource("6_gate")]
+position = Vector2(1766, 600)
+
+[node name="AncientEmberDevice" parent="." node_paths=PackedStringArray("TargetGate") instance=ExtResource("5_device")]
+position = Vector2(1450, 600)
+TargetGate = NodePath("../EmberGate")
+
+[node name="AncientSaveAnchor" parent="." instance=ExtResource("7_anchor")]
+position = Vector2(2050, 600)
+
+[node name="HUD" parent="." instance=ExtResource("8_hud")]
+
+[node name="DialogueModal" parent="." instance=ExtResource("9_dialogue")]
+
+[node name="TestModeInfoWindow" parent="." instance=ExtResource("10_infowin")]

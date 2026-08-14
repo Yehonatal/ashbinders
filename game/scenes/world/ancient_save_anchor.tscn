@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://ancient_save_anchor_scene_01"]
+
+[ext_resource type="Script" path="res://world/interactables/AncientSaveAnchor.cs" id="1_anchor"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_trigger"]
+size = Vector2(48, 48)
+
+[node name="AncientSaveAnchor" type="Area2D"]
+collision_layer = 32
+collision_mask = 0
+script = ExtResource("1_anchor")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_trigger")

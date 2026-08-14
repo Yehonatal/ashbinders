@@ -1,0 +1,93 @@
+[gd_scene load_steps=2 format=3 uid="uid://test_mode_info_window_scene_01"]
+
+[ext_resource type="Script" path="res://ui/modals/TestModeInfoWindow.cs" id="1_infowin"]
+
+[node name="TestModeInfoWindow" type="CanvasLayer"]
+layer = 100
+
+[node name="Control" type="Control" parent="."]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_infowin")
+
+[node name="OverlayBackground" type="ColorRect" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.04, 0.05, 0.08, 0.92)
+
+[node name="Panel" type="Panel" parent="Control"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -480.0
+offset_top = -320.0
+offset_right = 480.0
+offset_bottom = 320.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TitleLabel" type="Label" parent="Control/Panel"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 18.0
+offset_right = 936.0
+offset_bottom = 48.0
+theme_override_colors/font_color = Color(1, 0.75, 0.2, 1)
+theme_override_font_sizes/font_size = 18
+text = "🔥 ASHBINDERS — Underlevels Phase 1 Playable Test Gym"
+horizontal_alignment = 1
+
+[node name="DescriptionLabel" type="RichTextLabel" parent="Control/Panel"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 56.0
+offset_right = 936.0
+offset_bottom = 550.0
+bbcode_enabled = true
+text = "[b]WELCOME TO THE ASHBINDERS TEST ENVIRONMENT[/b]
+This prototype demonstrates the core game loop: [i]Explore → Fight → Extract Ember → Socket Ember → Activate Machine → Open Route → Save Game[/i].
+
+[b]🎨 VISUAL ASSET LEGEND (Placeholder Geometry):[/b]
+• [color=#3388EE]■ Dark Blue Capsule[/color]: [b]Kael (Ashbinder Protagonist)[/b]
+• [color=#EE4433]● Crimson Circle[/color]: [b]Basic Enemy (Scavenger Prowler)[/b] — Fast melee chaser; drops Motion Ember.
+• [color=#667799]⬡ Steel Hexagon[/color]: [b]Armored Enemy (Hollow Brute)[/b] — Heavy defense. [i]Requires Hammer Head [Key 2] to break armor![/i]
+• [color=#33CCDD]○ Teal Halo Circle[/color]: [b]Archivist Vael (NPC)[/b] — Approach and press [b]E[/b] to talk.
+• [color=#FFAA22]● Amber Glowing Orb[/color]: [b]Motion Ember[/b] — Boosts dash speed / powers Ancient Device.
+• [color=#4488FF]● Blue Glowing Orb[/color]: [b]Guard Ember[/b] — Drops from Armored Enemy.
+• [color=#FFBB22]◈ Golden Altar[/color]: [b]Ancient Ember Device[/b] — Accepts Motion Ember to unlock Vault Gate.
+• [color=#FF7722]❚ Barrier Gate[/color]: [b]Ember Gate[/b] — Unlocks when Ancient Device is powered.
+• [color=#FFDD33]★ Golden Pillar[/color]: [b]Ancient Save Anchor[/b] — Interact with [b]E[/b] to save full game state!
+
+[b]🎮 CONTROLS:[/b]
+• [b]WASD / Arrow Keys[/b]: Movement | [b]Space / K[/b]: Kinetic Dash
+• [b]Left Click / J[/b]: Attack | [b]1, 2, 3, 4 / Q[/b]: Switch Weapon Head (Blade / Hammer / Sickles / Spear)
+• [b]E[/b]: Interact / Talk / Extract / Power Machine / Save at Anchor
+• [b]F[/b]: Socket / Unsocket Ember in Ashbinder Chain"
+
+[node name="StartButton" type="Button" parent="Control/Panel"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -160.0
+offset_top = -65.0
+offset_right = 160.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 0.9, 0.3, 1)
+text = "[ ENTER UNDERLEVELS GYM ]"

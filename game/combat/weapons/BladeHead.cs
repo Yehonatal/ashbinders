@@ -8,16 +8,18 @@ public partial class BladeHead : WeaponHead
 {
     public BladeHead()
     {
-        HeadId = "blade_head_01";
+        HeadId = "blade_head";
         DisplayName = "Ashbinder Blade Head";
-        BaseDamage = 15;
-        AttackCooldown = 0.35f;
-        ReachDistance = 72.0f;
+        BaseDamage = 18;
+        AttackCooldown = 0.30f;
+        ReachDistance = 80.0f;
+        BreaksArmor = false;
+        StaggerForce = 120.0f;
         DamageType = DamageType.Physical;
     }
 
     public override void OnAttackTriggered(Node2D attacker, Vector2 direction)
     {
-        // Executes standard arc slash logic
+        // Slashing arc attack
     }
 }

@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://npc_character_scene_01"]
+
+[ext_resource type="Script" path="res://narrative/NpcCharacter.cs" id="1_npc"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_trigger"]
+radius = 24.0
+
+[node name="NpcCharacter" type="Area2D"]
+collision_layer = 32
+collision_mask = 0
+script = ExtResource("1_npc")
+NpcName = "Archivist Vael"
+DialogueText = "Greetings Ashbinder. The Underlevels are ancient and shifting. Power the device to open the Vault door ahead!"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_trigger")

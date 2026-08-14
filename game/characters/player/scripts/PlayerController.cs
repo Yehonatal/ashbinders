@@ -1,6 +1,7 @@
 using System;
 using Godot;
 using Ashbinders.Combat.Weapons;
+using Ashbinders.Core.Events;
 using Ashbinders.Embers.Core;
 using Ashbinders.Embers.Types;
 using Ashbinders.Gameplay.Damage;
@@ -31,7 +32,6 @@ public partial class PlayerController : CharacterBody2D, IDamageable
     private double _dashTimer;
     private double _dashCooldownTimer;
     private Vector2 _dashDirection;
-    private Node2D? _visualNode;
     private double _attackVisualTimer;
 
     public override void _Ready()
@@ -42,11 +42,14 @@ public partial class PlayerController : CharacterBody2D, IDamageable
         Interactor ??= GetNodeOrNull<InteractionDetector>("InteractionDetector");
         Chain ??= GetNodeOrNull<AshbinderChain>("AshbinderChain");
         ChainSocket ??= GetNodeOrNull<EmberSocket>("EmberSocket");
-        _visualNode = GetNodeOrNull<Node2D>("VisualPlaceholder");
+
+        if (Health != null)
+        {
+            Health.HealthChanged += (curr, max) => EventBus.Publish(new HealthChangedEvent(curr, max));
+        }
 
         if (ChainSocket != null && ChainSocket.CurrentEmber == null)
         {
-            // Give Kael 1 Motion Ember to start Phase 1 prototype
             ChainSocket.TryInsertEmber(new MotionEmber());
         }
     }
@@ -77,7 +80,6 @@ public partial class PlayerController : CharacterBody2D, IDamageable
 
         MoveAndSlide();
 
-        // Update Chain orientation
         if (Chain != null)
         {
             Chain.Rotation = FacingDirection.Angle();
@@ -118,6 +120,13 @@ public partial class PlayerController : CharacterBody2D, IDamageable
         {
             Interactor?.TryInteract(this);
         }
+
+        // Weapon Head Switching via Keybinds 1, 2, 3, 4 or Q
+        if (Input.IsKeyPressed(Key.Key1)) Chain?.SwitchHead(0); // Blade Head
+        if (Input.IsKeyPressed(Key.Key2)) Chain?.SwitchHead(1); // Hammer Head
+        if (Input.IsKeyPressed(Key.Key3)) Chain?.SwitchHead(2); // Twin Sickles
+        if (Input.IsKeyPressed(Key.Key4)) Chain?.SwitchHead(3); // Spear Tip
+        if (Input.IsKeyPressed(Key.Q)) Chain?.NextHead();
     }
 
     private float CalculateCurrentMoveSpeed()
@@ -185,14 +194,12 @@ public partial class PlayerController : CharacterBody2D, IDamageable
     {
         if (_attackVisualTimer > 0.0)
         {
-            // Visual slash arc for Ashbinder Chain attack
             var attackOffset = FacingDirection * 40.0f;
             DrawCircle(attackOffset, 24.0f, new Color(1.0f, 0.8f, 0.2f, 0.6f));
         }
 
         if (IsDashing)
         {
-            // Dash ghost ring
             DrawCircle(Vector2.Zero, 18.0f, new Color(0.4f, 0.7f, 1.0f, 0.4f));
         }
     }
