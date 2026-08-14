@@ -54,3 +54,6 @@ crash_dump*
 *.nupkg
 project.lock.json
 project.assets.json
+
+# Claude Code
+.claude/
