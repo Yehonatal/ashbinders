@@ -38,7 +38,10 @@ services:
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ${XAUTHORITY:-~/.Xauthority}:/tmp/.Xauthority:ro
+      - ${XDG_RUNTIME_DIR:-/run/user/1000}/pulse/native:/tmp/pulse-socket:ro
+      - ${HOME}/.config/pulse/cookie:/tmp/pulse-cookie:ro
       - /dev/dri:/dev/dri:rw
+      - /dev/snd:/dev/snd:rw
       - .:/app
     ipc: host
     network_mode: host

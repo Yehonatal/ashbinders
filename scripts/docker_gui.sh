@@ -12,6 +12,7 @@ fi
 
 # Set XAUTHORITY fallback if not already exported
 export XAUTHORITY="${XAUTHORITY:-$HOME/.Xauthority}"
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
 
 docker compose build gui
 docker compose run --rm gui "$@"
