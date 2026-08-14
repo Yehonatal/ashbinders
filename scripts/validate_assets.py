@@ -12,7 +12,7 @@ import re
 import sys
 
 ALLOWED_EXTENSIONS = {
-    '.png', '.jpg', '.jpeg', '.webp', '.psd', '.ase', '.aseprite',
+    '.png', '.jpg', '.jpeg', '.webp', '.svg', '.psd', '.ase', '.aseprite',
     '.wav', '.ogg', '.mp3', '.flac',
     '.blend', '.fbx', '.glb', '.gltf',
     '.ttf', '.otf',

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <rect width="128" height="128" rx="24" fill="#121316"/>
+  <path d="M64 16 C64 16, 40 48, 40 72 C40 88.5685 50.7452 102 64 102 C77.2548 102 88 88.5685 88 72 C88 48, 64 16, 64 16 Z" fill="url(#emberGradient)"/>
+  <path d="M64 36 C64 36, 48 60, 48 76 C48 86 55 92 64 92 C73 92 80 86 80 76 C80 60, 64 36, 64 36 Z" fill="url(#coreGradient)"/>
+  <path d="M64 56 C64 56, 56 70, 56 80 C56 85 59.5 88 64 88 C68.5 88 72 85 72 80 C72 70, 64 56, 64 56 Z" fill="#FFF2CE"/>
+  <defs>
+    <linearGradient id="emberGradient" x1="64" y1="16" x2="64" y2="102" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FF6B35"/>
+      <stop offset="50%" stop-color="#D62828"/>
+      <stop offset="100%" stop-color="#003049"/>
+    </linearGradient>
+    <linearGradient id="coreGradient" x1="64" y1="36" x2="64" y2="92" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFD166"/>
+      <stop offset="100%" stop-color="#F77F00"/>
+    </linearGradient>
+  </defs>
+</svg>

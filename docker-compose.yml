@@ -30,8 +30,10 @@ services:
     environment:
       - DISPLAY=${DISPLAY}
       - PULSE_SERVER=unix:/tmp/pulse-socket
+      - QT_X11_NO_MITSHM=1
+      - _X11_NO_MITSHM=1
     volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix:ro
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /dev/dri:/dev/dri:rw
       - .:/app
     ipc: host

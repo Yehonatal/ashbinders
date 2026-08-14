@@ -14,6 +14,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxrender1 \
     libxext6 \
     libxfixes3 \
+    libxkbcommon0 \
+    libxkbcommon-x11-0 \
+    libdbus-1-3 \
     libgl1-mesa-glx \
     libgl1-mesa-dri \
     libvulkan1 \
@@ -22,6 +25,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpulse0 \
     libfontconfig1 \
     && rm -rf /var/lib/apt/lists/*
+
+ENV QT_X11_NO_MITSHM=1
+ENV _X11_NO_MITSHM=1
 
 # Install Godot 4.3 .NET
 ENV GODOT_VERSION=4.3
