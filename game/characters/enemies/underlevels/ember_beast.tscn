@@ -1,20 +1,34 @@
-[gd_scene load_steps=8 format=3 uid="uid://ember_beast_scene_01"]
+[gd_scene load_steps=12 format=3 uid="uid://ember_beast_scene_01"]
 
 [ext_resource type="Script" path="res://characters/enemies/common/BasicEnemy.cs" id="1_enemy"]
 [ext_resource type="Script" path="res://gameplay/health/HealthComponent.cs" id="2_health"]
 [ext_resource type="Script" path="res://combat/hitboxes/Hitbox.cs" id="3_hitbox"]
 [ext_resource type="Script" path="res://combat/hitboxes/Hurtbox.cs" id="4_hurtbox"]
+[ext_resource type="Shader" path="res://rendering/shaders/drop_shadow.gdshader" id="5_shadow"]
+[ext_resource type="Shader" path="res://rendering/shaders/ember_pulse.gdshader" id="6_ember"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_body"]
-radius = 14.0
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_shadow"]
+shader = ExtResource("5_shadow")
+shader_parameter/shadow_color = Color(0.02, 0.03, 0.05, 0.7)
+shader_parameter/softness = 0.45
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ember"]
+shader = ExtResource("6_ember")
+shader_parameter/core_color = Color(1, 0.85, 0.2, 1)
+shader_parameter/glow_color = Color(0.95, 0.2, 0.1, 1)
+shader_parameter/pulse_speed = 4.0
+shader_parameter/intensity = 1.4
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ground_body"]
+radius = 12.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_hitbox"]
-radius = 18.0
+radius = 20.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_hurtbox"]
-radius = 16.0
+radius = 18.0
 
-[node name="EmberBeast" type="CharacterBody2D" node_paths=PackedStringArray("Health", "AttackHitbox")]
+[node name="EmberBeast" type="CharacterBody2D" node_paths=PackedStringArray("Health", "AttackHitbox", "VisualsNode", "DropShadowNode")]
 collision_layer = 4
 collision_mask = 1
 script = ExtResource("1_enemy")
@@ -24,24 +38,66 @@ AttackRange = 36.0
 BaseAttackDamage = 10
 Health = NodePath("HealthComponent")
 AttackHitbox = NodePath("Hitbox")
+VisualsNode = NodePath("Visuals")
+DropShadowNode = NodePath("DropShadow")
+
+[node name="DropShadow" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_shadow")
+offset_left = -16.0
+offset_top = -8.0
+offset_right = 16.0
+offset_bottom = 8.0
+mouse_filter = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_body")
+shape = SubResource("CircleShape2D_ground_body")
 
-[node name="VisualPlaceholder" type="ColorRect" parent="."]
-offset_left = -12.0
-offset_top = -12.0
-offset_right = 12.0
-offset_bottom = 12.0
-color = Color(0.85, 0.25, 0.2, 1)
+[node name="Visuals" type="Node2D" parent="."]
+y_sort_enabled = true
 
-[node name="Eye" type="ColorRect" parent="VisualPlaceholder"]
-layout_mode = 0
-offset_left = 6.0
-offset_top = 4.0
-offset_right = 10.0
-offset_bottom = 8.0
+[node name="BodyShadowSide" type="ColorRect" parent="Visuals"]
+offset_left = -14.0
+offset_top = -22.0
+offset_bottom = -2.0
+mouse_filter = 2
+color = Color(0.55, 0.15, 0.12, 1)
+
+[node name="BodyLitSide" type="ColorRect" parent="Visuals"]
+offset_top = -22.0
+offset_right = 14.0
+offset_bottom = -2.0
+mouse_filter = 2
+color = Color(0.82, 0.25, 0.18, 1)
+
+[node name="SpineVents" type="ColorRect" parent="Visuals"]
+material = SubResource("ShaderMaterial_ember")
+offset_left = -3.0
+offset_top = -24.0
+offset_right = 3.0
+offset_bottom = -8.0
+mouse_filter = 2
+
+[node name="EyeSlitLeft" type="ColorRect" parent="Visuals"]
+offset_left = -8.0
+offset_top = -18.0
+offset_right = -4.0
+offset_bottom = -15.0
+mouse_filter = 2
 color = Color(1, 0.9, 0.2, 1)
+
+[node name="EyeSlitRight" type="ColorRect" parent="Visuals"]
+offset_left = 4.0
+offset_top = -18.0
+offset_right = 8.0
+offset_bottom = -15.0
+mouse_filter = 2
+color = Color(1, 0.9, 0.2, 1)
+
+[node name="EmberBeastLight" type="PointLight2D" parent="Visuals"]
+position = Vector2(0, -14)
+color = Color(1, 0.4, 0.15, 1)
+energy = 0.8
+texture_scale = 1.0
 
 [node name="HealthComponent" type="Node" parent="."]
 script = ExtResource("2_health")

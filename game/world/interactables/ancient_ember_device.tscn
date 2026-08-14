@@ -1,13 +1,27 @@
-[gd_scene load_steps=5 format=3 uid="uid://ancient_ember_device_scene_01"]
+[gd_scene load_steps=8 format=3 uid="uid://ancient_ember_device_scene_01"]
 
 [ext_resource type="Script" path="res://world/interactables/AncientEmberDevice.cs" id="1_device"]
 [ext_resource type="Script" path="res://embers/core/EmberSocket.cs" id="2_socket"]
+[ext_resource type="Shader" path="res://rendering/shaders/drop_shadow.gdshader" id="3_shadow"]
+[ext_resource type="Shader" path="res://rendering/shaders/ember_pulse.gdshader" id="4_ember"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_shadow"]
+shader = ExtResource("3_shadow")
+shader_parameter/shadow_color = Color(0.02, 0.03, 0.05, 0.75)
+shader_parameter/softness = 0.4
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ember"]
+shader = ExtResource("4_ember")
+shader_parameter/core_color = Color(1, 0.8, 0.25, 1)
+shader_parameter/glow_color = Color(0.9, 0.45, 0.05, 1)
+shader_parameter/pulse_speed = 3.0
+shader_parameter/intensity = 1.6
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_trigger"]
-radius = 36.0
+radius = 42.0
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
-size = Vector2(32, 32)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ground_body"]
+size = Vector2(36, 18)
 
 [node name="AncientEmberDevice" type="Area2D" node_paths=PackedStringArray("Socket")]
 collision_layer = 32
@@ -17,6 +31,14 @@ DeviceId = "ancient_ember_device_01"
 RequiredEmberType = 0
 Socket = NodePath("EmberSocket")
 
+[node name="DropShadow" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_shadow")
+offset_left = -26.0
+offset_top = -13.0
+offset_right = 26.0
+offset_bottom = 13.0
+mouse_filter = 2
+
 [node name="TriggerShape" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_trigger")
 
@@ -25,22 +47,46 @@ collision_layer = 1
 collision_mask = 0
 
 [node name="BodyCollision" type="CollisionShape2D" parent="StaticBody2D"]
-shape = SubResource("RectangleShape2D_body")
+shape = SubResource("RectangleShape2D_ground_body")
 
-[node name="VisualBase" type="ColorRect" parent="."]
+[node name="Visuals" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="PedestalShadowSide" type="ColorRect" parent="Visuals"]
+offset_left = -18.0
+offset_top = -24.0
+offset_bottom = -2.0
+mouse_filter = 2
+color = Color(0.24, 0.22, 0.2, 1)
+
+[node name="PedestalLitSide" type="ColorRect" parent="Visuals"]
+offset_top = -24.0
+offset_right = 18.0
+offset_bottom = -2.0
+mouse_filter = 2
+color = Color(0.38, 0.34, 0.3, 1)
+
+[node name="TopCap" type="ColorRect" parent="Visuals"]
 offset_left = -16.0
-offset_top = -16.0
+offset_top = -32.0
 offset_right = 16.0
-offset_bottom = 16.0
-color = Color(0.35, 0.3, 0.25, 1)
+offset_bottom = -22.0
+mouse_filter = 2
+color = Color(0.5, 0.45, 0.4, 1)
 
-[node name="MachineCore" type="ColorRect" parent="VisualBase"]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 24.0
-offset_bottom = 24.0
-color = Color(0.85, 0.6, 0.15, 1)
+[node name="EmberReceptacle" type="ColorRect" parent="Visuals"]
+material = SubResource("ShaderMaterial_ember")
+offset_left = -8.0
+offset_top = -36.0
+offset_right = 8.0
+offset_bottom = -20.0
+mouse_filter = 2
+
+[node name="DevicePointLight" type="PointLight2D" parent="Visuals"]
+position = Vector2(0, -26)
+color = Color(1, 0.6, 0.2, 1)
+energy = 1.4
+texture_scale = 1.8
 
 [node name="EmberSocket" type="Node" parent="."]
 script = ExtResource("2_socket")

@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://gym_underlevels_scene_01"]
+[gd_scene load_steps=17 format=3 uid="uid://gym_underlevels_scene_01"]
 
 [ext_resource type="PackedScene" path="res://characters/player/player_kael.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://characters/enemies/underlevels/ember_beast.tscn" id="2_basic_enemy"]
@@ -10,6 +10,23 @@
 [ext_resource type="PackedScene" path="res://ui/hud/hud.tscn" id="8_hud"]
 [ext_resource type="PackedScene" path="res://ui/dialogue/dialogue_modal.tscn" id="9_dialogue"]
 [ext_resource type="PackedScene" path="res://ui/debug/test_mode_info_window.tscn" id="10_infowin"]
+[ext_resource type="Shader" path="res://rendering/shaders/isometric_floor.gdshader" id="11_floor_shader"]
+[ext_resource type="Shader" path="res://rendering/shaders/drop_shadow.gdshader" id="12_shadow"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_floor"]
+shader = ExtResource("11_floor_shader")
+shader_parameter/base_color = Color(0.06, 0.07, 0.09, 1)
+shader_parameter/tile_color = Color(0.1, 0.12, 0.16, 1)
+shader_parameter/grid_line_color = Color(0.18, 0.22, 0.28, 1)
+shader_parameter/conduit_glow_color = Color(1, 0.55, 0.15, 0.35)
+shader_parameter/tile_size = Vector2(64, 32)
+shader_parameter/line_width = 1.0
+shader_parameter/conduit_speed = 0.8
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_shadow"]
+shader = ExtResource("12_shadow")
+shader_parameter/shadow_color = Color(0.02, 0.03, 0.05, 0.8)
+shader_parameter/softness = 0.45
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_horiz"]
 size = Vector2(2400, 32)
@@ -17,56 +34,35 @@ size = Vector2(2400, 32)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_vert"]
 size = Vector2(32, 1200)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_pillar"]
-size = Vector2(64, 64)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ground_pillar"]
+size = Vector2(64, 32)
 
 [node name="UnderlevelsGym" type="Node2D"]
+y_sort_enabled = true
 
-[node name="FloorBackground" type="ColorRect" parent="."]
+[node name="CanvasModulate" type="CanvasModulate" parent="."]
+color = Color(0.35, 0.38, 0.45, 1)
+
+[node name="IsometricFloor" type="ColorRect" parent="."]
+z_index = -10
+material = SubResource("ShaderMaterial_floor")
 offset_right = 2400.0
 offset_bottom = 1200.0
 mouse_filter = 2
-color = Color(0.06, 0.07, 0.09, 1)
 
-[node name="CombatAreaFloor" type="ColorRect" parent="."]
-offset_left = 64.0
-offset_top = 64.0
-offset_right = 1150.0
-offset_bottom = 1136.0
-mouse_filter = 2
-color = Color(0.1, 0.12, 0.15, 1)
-
-[node name="JunctionAreaFloor" type="ColorRect" parent="."]
-offset_left = 1150.0
-offset_top = 64.0
-offset_right = 1750.0
-offset_bottom = 1136.0
-mouse_filter = 2
-color = Color(0.12, 0.14, 0.18, 1)
-
-[node name="VaultAreaFloor" type="ColorRect" parent="."]
-offset_left = 1750.0
-offset_top = 64.0
-offset_right = 2336.0
-offset_bottom = 1136.0
-mouse_filter = 2
-color = Color(0.16, 0.15, 0.12, 1)
-
-[node name="ChamberDividerUpper" type="ColorRect" parent="."]
-offset_left = 1750.0
-offset_top = 64.0
-offset_right = 1782.0
-offset_bottom = 500.0
-mouse_filter = 2
-color = Color(0.25, 0.28, 0.32, 1)
-
-[node name="ChamberDividerLower" type="ColorRect" parent="."]
-offset_left = 1750.0
-offset_top = 700.0
-offset_right = 1782.0
-offset_bottom = 1136.0
-mouse_filter = 2
-color = Color(0.25, 0.28, 0.32, 1)
+[node name="AmbientEmberParticles" type="CPUParticles2D" parent="."]
+z_index = 5
+position = Vector2(1200, 600)
+amount = 40
+lifetime = 6.0
+emission_shape = 3
+emission_rect_extents = Vector2(1100, 550)
+gravity = Vector2(0, -12)
+initial_velocity_min = 4.0
+initial_velocity_max = 16.0
+scale_amount_min = 1.5
+scale_amount_max = 3.5
+color = Color(1, 0.65, 0.2, 0.6)
 
 [node name="ArenaWalls" type="StaticBody2D" parent="."]
 collision_layer = 1
@@ -88,29 +84,119 @@ shape = SubResource("RectangleShape2D_wall_vert")
 position = Vector2(2384, 600)
 shape = SubResource("RectangleShape2D_wall_vert")
 
-[node name="PillarA" type="CollisionShape2D" parent="ArenaWalls"]
+[node name="WallVisualNorth" type="ColorRect" parent="ArenaWalls"]
+offset_left = 32.0
+offset_top = 4.0
+offset_right = 2368.0
+offset_bottom = 28.0
+mouse_filter = 2
+color = Color(0.2, 0.24, 0.3, 1)
+
+[node name="WallVisualSouth" type="ColorRect" parent="ArenaWalls"]
+offset_left = 32.0
+offset_top = 1172.0
+offset_right = 2368.0
+offset_bottom = 1196.0
+mouse_filter = 2
+color = Color(0.2, 0.24, 0.3, 1)
+
+[node name="WallVisualWest" type="ColorRect" parent="ArenaWalls"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 28.0
+offset_bottom = 1196.0
+mouse_filter = 2
+color = Color(0.15, 0.18, 0.24, 1)
+
+[node name="WallVisualEast" type="ColorRect" parent="ArenaWalls"]
+offset_left = 2372.0
+offset_top = 4.0
+offset_right = 2396.0
+offset_bottom = 1196.0
+mouse_filter = 2
+color = Color(0.26, 0.3, 0.38, 1)
+
+[node name="PillarA" type="StaticBody2D" parent="."]
 position = Vector2(500, 400)
-shape = SubResource("RectangleShape2D_pillar")
+collision_layer = 1
+collision_mask = 0
 
-[node name="PillarAVisual" type="ColorRect" parent="ArenaWalls/PillarA"]
-offset_left = -32.0
-offset_top = -32.0
-offset_right = 32.0
-offset_bottom = 32.0
+[node name="Shadow" type="ColorRect" parent="PillarA"]
+material = SubResource("ShaderMaterial_shadow")
+offset_left = -42.0
+offset_top = -20.0
+offset_right = 42.0
+offset_bottom = 20.0
 mouse_filter = 2
-color = Color(0.22, 0.25, 0.3, 1)
 
-[node name="PillarB" type="CollisionShape2D" parent="ArenaWalls"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PillarA"]
+shape = SubResource("RectangleShape2D_ground_pillar")
+
+[node name="Visuals" type="Node2D" parent="PillarA"]
+y_sort_enabled = true
+
+[node name="ShadowSide" type="ColorRect" parent="PillarA/Visuals"]
+offset_left = -32.0
+offset_top = -64.0
+offset_bottom = -2.0
+mouse_filter = 2
+color = Color(0.18, 0.2, 0.25, 1)
+
+[node name="LitSide" type="ColorRect" parent="PillarA/Visuals"]
+offset_top = -64.0
+offset_right = 32.0
+offset_bottom = -2.0
+mouse_filter = 2
+color = Color(0.3, 0.35, 0.42, 1)
+
+[node name="TopCap" type="ColorRect" parent="PillarA/Visuals"]
+offset_left = -30.0
+offset_top = -80.0
+offset_right = 30.0
+offset_bottom = -60.0
+mouse_filter = 2
+color = Color(0.42, 0.48, 0.56, 1)
+
+[node name="PillarB" type="StaticBody2D" parent="."]
 position = Vector2(500, 800)
-shape = SubResource("RectangleShape2D_pillar")
+collision_layer = 1
+collision_mask = 0
 
-[node name="PillarBVisual" type="ColorRect" parent="ArenaWalls/PillarB"]
-offset_left = -32.0
-offset_top = -32.0
-offset_right = 32.0
-offset_bottom = 32.0
+[node name="Shadow" type="ColorRect" parent="PillarB"]
+material = SubResource("ShaderMaterial_shadow")
+offset_left = -42.0
+offset_top = -20.0
+offset_right = 42.0
+offset_bottom = 20.0
 mouse_filter = 2
-color = Color(0.22, 0.25, 0.3, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PillarB"]
+shape = SubResource("RectangleShape2D_ground_pillar")
+
+[node name="Visuals" type="Node2D" parent="PillarB"]
+y_sort_enabled = true
+
+[node name="ShadowSide" type="ColorRect" parent="PillarB/Visuals"]
+offset_left = -32.0
+offset_top = -64.0
+offset_bottom = -2.0
+mouse_filter = 2
+color = Color(0.18, 0.2, 0.25, 1)
+
+[node name="LitSide" type="ColorRect" parent="PillarB/Visuals"]
+offset_top = -64.0
+offset_right = 32.0
+offset_bottom = -2.0
+mouse_filter = 2
+color = Color(0.3, 0.35, 0.42, 1)
+
+[node name="TopCap" type="ColorRect" parent="PillarB/Visuals"]
+offset_left = -30.0
+offset_top = -80.0
+offset_right = 30.0
+offset_bottom = -60.0
+mouse_filter = 2
+color = Color(0.42, 0.48, 0.56, 1)
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
 position = Vector2(200, 600)

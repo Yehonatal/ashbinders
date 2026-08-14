@@ -33,18 +33,29 @@ public partial class BasicEnemy : CharacterBody2D, IDamageable
     [Export] public Hitbox? AttackHitbox { get; set; }
     [Export] public Ember? DroppedEmberOnDeath { get; set; }
 
+    [Export] public Node2D? VisualsNode { get; set; }
+    [Export] public CanvasItem? DropShadowNode { get; set; }
+
     public EnemyState State { get; private set; } = EnemyState.Idle;
     public Node2D? Target { get; set; }
 
     private double _attackTimer;
     private double _hitstunTimer;
     private double _attackWindupTimer;
+    private Vector2 _initialVisualPosition = Vector2.Zero;
 
     public override void _Ready()
     {
         Health ??= GetNodeOrNull<HealthComponent>("HealthComponent");
         AttackHitbox ??= GetNodeOrNull<Hitbox>("Hitbox");
+        VisualsNode ??= GetNodeOrNull<Node2D>("Visuals");
+        DropShadowNode ??= GetNodeOrNull<CanvasItem>("DropShadow");
         DroppedEmberOnDeath ??= new MotionEmber();
+
+        if (VisualsNode != null)
+        {
+            _initialVisualPosition = VisualsNode.Position;
+        }
 
         if (Health != null)
         {
@@ -107,6 +118,7 @@ public partial class BasicEnemy : CharacterBody2D, IDamageable
     private void ProcessIdle()
     {
         Velocity = Vector2.Zero;
+        ResetPounceElevation();
         if (Target != null && GlobalPosition.DistanceTo(Target.GlobalPosition) <= DetectionRadius)
         {
             State = EnemyState.Chase;
@@ -115,6 +127,7 @@ public partial class BasicEnemy : CharacterBody2D, IDamageable
 
     private void ProcessChase(double delta)
     {
+        ResetPounceElevation();
         if (Target == null || !GodotObject.IsInstanceValid(Target))
         {
             State = EnemyState.Idle;
@@ -145,8 +158,21 @@ public partial class BasicEnemy : CharacterBody2D, IDamageable
         if (_attackWindupTimer > 0.0)
         {
             _attackWindupTimer -= delta;
+
+            // Pounce Elevation
+            var pounceZ = (float)Math.Sin((1.0 - _attackWindupTimer / 0.3) * Math.PI) * 10.0f;
+            if (VisualsNode != null)
+            {
+                VisualsNode.Position = _initialVisualPosition + new Vector2(0, -pounceZ);
+            }
+            if (DropShadowNode != null)
+            {
+                DropShadowNode.Scale = new Vector2(1.0f - pounceZ * 0.03f, 0.5f * (1.0f - pounceZ * 0.03f));
+            }
+
             if (_attackWindupTimer <= 0.0)
             {
+                ResetPounceElevation();
                 if (Target != null && GlobalPosition.DistanceTo(Target.GlobalPosition) <= AttackRange * 1.2f)
                 {
                     if (Target is IDamageable damageable)
@@ -161,8 +187,15 @@ public partial class BasicEnemy : CharacterBody2D, IDamageable
         }
     }
 
+    private void ResetPounceElevation()
+    {
+        if (VisualsNode != null) VisualsNode.Position = _initialVisualPosition;
+        if (DropShadowNode != null) DropShadowNode.Scale = new Vector2(1.0f, 0.5f);
+    }
+
     private void ProcessHurt()
     {
+        ResetPounceElevation();
         Velocity = Velocity.MoveToward(Vector2.Zero, 600.0f * (float)GetPhysicsProcessDeltaTime());
     }
 
@@ -196,20 +229,18 @@ public partial class BasicEnemy : CharacterBody2D, IDamageable
 
     public override void _Draw()
     {
-        if (State == EnemyState.Hurt)
-        {
-            DrawCircle(Vector2.Zero, 16.0f, Colors.White);
-        }
-        else if (State == EnemyState.Attack)
-        {
-            DrawCircle(Vector2.Zero, 20.0f, new Color(1.0f, 0.2f, 0.2f, 0.5f));
-        }
-
+        // 2D Isometric Health Bar above head
         if (Health != null && Health.CurrentHealth < Health.MaxHealth)
         {
             var hpRatio = (float)Health.CurrentHealth / Health.MaxHealth;
-            DrawRect(new Rect2(-16, -24, 32, 4), new Color(0.2f, 0.2f, 0.2f));
-            DrawRect(new Rect2(-16, -24, 32 * hpRatio, 4), new Color(0.9f, 0.2f, 0.2f));
+            DrawRect(new Rect2(-16, -38, 32, 4), new Color(0.1f, 0.12f, 0.15f, 0.85f));
+            DrawRect(new Rect2(-16, -38, 32 * hpRatio, 4), new Color(0.9f, 0.25f, 0.2f));
+        }
+
+        // Pounce warning circle
+        if (State == EnemyState.Attack)
+        {
+            DrawArc(Vector2.Zero, AttackRange, 0, Mathf.Tau, 16, new Color(1.0f, 0.2f, 0.2f, 0.4f), 2.0f);
         }
     }
 }

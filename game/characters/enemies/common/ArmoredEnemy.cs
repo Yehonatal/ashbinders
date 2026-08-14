@@ -25,6 +25,9 @@ public partial class ArmoredEnemy : CharacterBody2D, IDamageable
     [Export] public HealthComponent? Health { get; set; }
     [Export] public Ember? DroppedEmberOnDeath { get; set; }
 
+    [Export] public Node2D? VisualsNode { get; set; }
+    [Export] public CanvasItem? DropShadowNode { get; set; }
+
     public EnemyState State { get; private set; } = EnemyState.Idle;
     public Node2D? Target { get; set; }
 
@@ -35,6 +38,9 @@ public partial class ArmoredEnemy : CharacterBody2D, IDamageable
     public override void _Ready()
     {
         Health ??= GetNodeOrNull<HealthComponent>("HealthComponent");
+        VisualsNode ??= GetNodeOrNull<Node2D>("Visuals");
+        DropShadowNode ??= GetNodeOrNull<CanvasItem>("DropShadow");
+
         if (Health != null)
         {
             Health.SetHealthDirectly(120, 120);
@@ -197,21 +203,18 @@ public partial class ArmoredEnemy : CharacterBody2D, IDamageable
 
     public override void _Draw()
     {
-        var color = HasArmor ? new Color(0.4f, 0.45f, 0.55f) : new Color(0.7f, 0.2f, 0.2f);
-        if (State == EnemyState.Hurt) color = Colors.White;
-
-        DrawCircle(Vector2.Zero, 22.0f, color);
-
-        if (HasArmor)
-        {
-            DrawArc(Vector2.Zero, 26.0f, 0, Mathf.Tau, 24, new Color(0.9f, 0.95f, 1.0f), 3.0f);
-        }
-
+        // 2.5D Isometric Health & Armor Indicator
         if (Health != null && Health.CurrentHealth < Health.MaxHealth)
         {
             var hpRatio = (float)Health.CurrentHealth / Health.MaxHealth;
-            DrawRect(new Rect2(-20, -32, 40, 5), new Color(0.2f, 0.2f, 0.2f));
-            DrawRect(new Rect2(-20, -32, 40 * hpRatio, 5), HasArmor ? new Color(0.3f, 0.6f, 0.9f) : new Color(0.9f, 0.2f, 0.2f));
+            DrawRect(new Rect2(-20, -48, 40, 5), new Color(0.1f, 0.12f, 0.15f, 0.85f));
+            DrawRect(new Rect2(-20, -48, 40 * hpRatio, 5), HasArmor ? new Color(0.35f, 0.65f, 0.95f) : new Color(0.9f, 0.25f, 0.2f));
+        }
+
+        // Isometric Shield Barrier Ring
+        if (HasArmor)
+        {
+            DrawArc(Vector2.Zero, 24.0f, 0, Mathf.Tau, 24, new Color(0.4f, 0.75f, 1.0f, 0.6f), 2.5f);
         }
     }
 }

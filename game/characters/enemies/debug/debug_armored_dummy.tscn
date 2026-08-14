@@ -1,16 +1,22 @@
-[gd_scene load_steps=7 format=3 uid="uid://debug_armored_dummy_scene_01"]
+[gd_scene load_steps=8 format=3 uid="uid://debug_armored_dummy_scene_01"]
 
 [ext_resource type="Script" path="res://characters/enemies/common/ArmoredEnemy.cs" id="1_armored"]
 [ext_resource type="Script" path="res://gameplay/health/HealthComponent.cs" id="2_health"]
 [ext_resource type="Script" path="res://combat/hitboxes/Hurtbox.cs" id="3_hurtbox"]
+[ext_resource type="Shader" path="res://rendering/shaders/drop_shadow.gdshader" id="4_shadow"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_body"]
-radius = 22.0
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_shadow"]
+shader = ExtResource("4_shadow")
+shader_parameter/shadow_color = Color(0.02, 0.03, 0.05, 0.7)
+shader_parameter/softness = 0.45
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ground_body"]
+radius = 16.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_hurtbox"]
-radius = 26.0
+radius = 22.0
 
-[node name="DebugArmoredDummy" type="CharacterBody2D" node_paths=PackedStringArray("Health")]
+[node name="DebugArmoredDummy" type="CharacterBody2D" node_paths=PackedStringArray("Health", "VisualsNode", "DropShadowNode")]
 collision_layer = 4
 collision_mask = 1
 script = ExtResource("1_armored")
@@ -19,16 +25,52 @@ DetectionRadius = 240.0
 AttackRange = 50.0
 BaseAttackDamage = 22
 Health = NodePath("HealthComponent")
+VisualsNode = NodePath("Visuals")
+DropShadowNode = NodePath("DropShadow")
+
+[node name="DropShadow" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_shadow")
+offset_left = -22.0
+offset_top = -11.0
+offset_right = 22.0
+offset_bottom = 11.0
+mouse_filter = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_body")
+shape = SubResource("CircleShape2D_ground_body")
 
-[node name="VisualPlaceholder" type="ColorRect" parent="."]
-offset_left = -20.0
-offset_top = -20.0
-offset_right = 20.0
-offset_bottom = 20.0
-color = Color(0.4, 0.45, 0.55, 1)
+[node name="Visuals" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="PrismShadowSide" type="ColorRect" parent="Visuals"]
+offset_left = -18.0
+offset_top = -36.0
+offset_bottom = -2.0
+mouse_filter = 2
+color = Color(0.28, 0.32, 0.4, 1)
+
+[node name="PrismLitSide" type="ColorRect" parent="Visuals"]
+offset_top = -36.0
+offset_right = 18.0
+offset_bottom = -2.0
+mouse_filter = 2
+color = Color(0.45, 0.52, 0.65, 1)
+
+[node name="TopCap" type="ColorRect" parent="Visuals"]
+offset_left = -16.0
+offset_top = -42.0
+offset_right = 16.0
+offset_bottom = -34.0
+mouse_filter = 2
+color = Color(0.6, 0.7, 0.85, 1)
+
+[node name="ShieldRune" type="ColorRect" parent="Visuals"]
+offset_left = -6.0
+offset_top = -26.0
+offset_right = 6.0
+offset_bottom = -14.0
+mouse_filter = 2
+color = Color(0.3, 0.8, 1, 0.9)
 
 [node name="HealthComponent" type="Node" parent="."]
 script = ExtResource("2_health")

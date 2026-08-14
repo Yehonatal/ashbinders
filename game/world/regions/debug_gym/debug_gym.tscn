@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://universal_debug_gym_scene_01"]
+[gd_scene load_steps=13 format=3 uid="uid://universal_debug_gym_scene_01"]
 
 [ext_resource type="PackedScene" path="res://characters/player/player_kael.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://characters/enemies/debug/debug_combat_dummy.tscn" id="2_combat_dummy"]
@@ -9,6 +9,17 @@
 [ext_resource type="PackedScene" path="res://ui/hud/hud.tscn" id="7_hud"]
 [ext_resource type="PackedScene" path="res://ui/dialogue/dialogue_modal.tscn" id="8_dialogue"]
 [ext_resource type="PackedScene" path="res://ui/debug/test_mode_info_window.tscn" id="9_infowin"]
+[ext_resource type="Shader" path="res://rendering/shaders/isometric_floor.gdshader" id="10_floor_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_floor"]
+shader = ExtResource("10_floor_shader")
+shader_parameter/base_color = Color(0.05, 0.06, 0.08, 1)
+shader_parameter/tile_color = Color(0.08, 0.1, 0.14, 1)
+shader_parameter/grid_line_color = Color(0.15, 0.18, 0.24, 1)
+shader_parameter/conduit_glow_color = Color(0.3, 0.8, 1, 0.3)
+shader_parameter/tile_size = Vector2(64, 32)
+shader_parameter/line_width = 1.0
+shader_parameter/conduit_speed = 0.6
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_horiz"]
 size = Vector2(1600, 32)
@@ -17,20 +28,17 @@ size = Vector2(1600, 32)
 size = Vector2(32, 1000)
 
 [node name="UniversalDebugGym" type="Node2D"]
+y_sort_enabled = true
 
-[node name="FloorBackground" type="ColorRect" parent="."]
+[node name="CanvasModulate" type="CanvasModulate" parent="."]
+color = Color(0.4, 0.42, 0.5, 1)
+
+[node name="IsometricFloor" type="ColorRect" parent="."]
+z_index = -10
+material = SubResource("ShaderMaterial_floor")
 offset_right = 1600.0
 offset_bottom = 1000.0
 mouse_filter = 2
-color = Color(0.05, 0.06, 0.08, 1)
-
-[node name="GridPattern" type="ColorRect" parent="."]
-offset_left = 32.0
-offset_top = 32.0
-offset_right = 1568.0
-offset_bottom = 968.0
-mouse_filter = 2
-color = Color(0.08, 0.1, 0.13, 1)
 
 [node name="ArenaWalls" type="StaticBody2D" parent="."]
 collision_layer = 1
@@ -51,6 +59,38 @@ shape = SubResource("RectangleShape2D_wall_vert")
 [node name="WallEast" type="CollisionShape2D" parent="ArenaWalls"]
 position = Vector2(1584, 500)
 shape = SubResource("RectangleShape2D_wall_vert")
+
+[node name="WallVisualNorth" type="ColorRect" parent="ArenaWalls"]
+offset_left = 32.0
+offset_top = 4.0
+offset_right = 1568.0
+offset_bottom = 28.0
+mouse_filter = 2
+color = Color(0.2, 0.24, 0.3, 1)
+
+[node name="WallVisualSouth" type="ColorRect" parent="ArenaWalls"]
+offset_left = 32.0
+offset_top = 972.0
+offset_right = 1568.0
+offset_bottom = 996.0
+mouse_filter = 2
+color = Color(0.2, 0.24, 0.3, 1)
+
+[node name="WallVisualWest" type="ColorRect" parent="ArenaWalls"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 28.0
+offset_bottom = 996.0
+mouse_filter = 2
+color = Color(0.15, 0.18, 0.24, 1)
+
+[node name="WallVisualEast" type="ColorRect" parent="ArenaWalls"]
+offset_left = 1572.0
+offset_top = 4.0
+offset_right = 1596.0
+offset_bottom = 996.0
+mouse_filter = 2
+color = Color(0.26, 0.3, 0.38, 1)
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
 position = Vector2(200, 500)

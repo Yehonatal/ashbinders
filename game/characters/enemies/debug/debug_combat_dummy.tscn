@@ -1,20 +1,26 @@
-[gd_scene load_steps=8 format=3 uid="uid://debug_combat_dummy_scene_01"]
+[gd_scene load_steps=10 format=3 uid="uid://debug_combat_dummy_scene_01"]
 
 [ext_resource type="Script" path="res://characters/enemies/common/BasicEnemy.cs" id="1_enemy"]
 [ext_resource type="Script" path="res://gameplay/health/HealthComponent.cs" id="2_health"]
 [ext_resource type="Script" path="res://combat/hitboxes/Hitbox.cs" id="3_hitbox"]
 [ext_resource type="Script" path="res://combat/hitboxes/Hurtbox.cs" id="4_hurtbox"]
+[ext_resource type="Shader" path="res://rendering/shaders/drop_shadow.gdshader" id="5_shadow"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_body"]
-radius = 14.0
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_shadow"]
+shader = ExtResource("5_shadow")
+shader_parameter/shadow_color = Color(0.02, 0.03, 0.05, 0.7)
+shader_parameter/softness = 0.45
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ground_body"]
+radius = 12.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_hitbox"]
-radius = 18.0
+radius = 16.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_hurtbox"]
 radius = 16.0
 
-[node name="DebugCombatDummy" type="CharacterBody2D" node_paths=PackedStringArray("Health", "AttackHitbox")]
+[node name="DebugCombatDummy" type="CharacterBody2D" node_paths=PackedStringArray("Health", "AttackHitbox", "VisualsNode", "DropShadowNode")]
 collision_layer = 4
 collision_mask = 1
 script = ExtResource("1_enemy")
@@ -24,24 +30,52 @@ AttackRange = 36.0
 BaseAttackDamage = 5
 Health = NodePath("HealthComponent")
 AttackHitbox = NodePath("Hitbox")
+VisualsNode = NodePath("Visuals")
+DropShadowNode = NodePath("DropShadow")
+
+[node name="DropShadow" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_shadow")
+offset_left = -16.0
+offset_top = -8.0
+offset_right = 16.0
+offset_bottom = 8.0
+mouse_filter = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_body")
+shape = SubResource("CircleShape2D_ground_body")
 
-[node name="VisualPlaceholder" type="ColorRect" parent="."]
-offset_left = -12.0
-offset_top = -12.0
-offset_right = 12.0
-offset_bottom = 12.0
-color = Color(0.9, 0.45, 0.1, 1)
+[node name="Visuals" type="Node2D" parent="."]
+y_sort_enabled = true
 
-[node name="DebugCross" type="ColorRect" parent="VisualPlaceholder"]
-layout_mode = 0
-offset_left = 10.0
-offset_top = 4.0
-offset_right = 14.0
-offset_bottom = 20.0
-color = Color(1, 1, 1, 0.8)
+[node name="PostShadowSide" type="ColorRect" parent="Visuals"]
+offset_left = -10.0
+offset_top = -30.0
+offset_bottom = -2.0
+mouse_filter = 2
+color = Color(0.4, 0.22, 0.1, 1)
+
+[node name="PostLitSide" type="ColorRect" parent="Visuals"]
+offset_top = -30.0
+offset_right = 10.0
+offset_bottom = -2.0
+mouse_filter = 2
+color = Color(0.65, 0.38, 0.18, 1)
+
+[node name="TargetCrossHorizontal" type="ColorRect" parent="Visuals"]
+offset_left = -8.0
+offset_top = -20.0
+offset_right = 8.0
+offset_bottom = -16.0
+mouse_filter = 2
+color = Color(1, 0.9, 0.4, 1)
+
+[node name="TargetCrossVertical" type="ColorRect" parent="Visuals"]
+offset_left = -2.0
+offset_top = -26.0
+offset_right = 2.0
+offset_bottom = -10.0
+mouse_filter = 2
+color = Color(1, 0.9, 0.4, 1)
 
 [node name="HealthComponent" type="Node" parent="."]
 script = ExtResource("2_health")
