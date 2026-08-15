@@ -1,0 +1,26 @@
+# Windows-only overrides. Merged on top of docker-compose.yml.
+# The Linux side never loads this file.
+services:
+  # Hide the Linux X11 service behind a profile so it isn't built by default.
+  gui:
+    profiles: ["linux"]
+
+  # Windows GUI player via Docker Desktop's WSLg bridge.
+  gui-win:
+    profiles: ["windows"]
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.gui
+    container_name: ashbinders-gui-win
+    environment:
+      DISPLAY: "${DISPLAY:-:0}"
+      WAYLAND_DISPLAY: "wayland-0"
+      PULSE_SERVER: "/mnt/wslg/PulseServer"
+      QT_X11_NO_MITSHM: "1"
+      _X11_NO_MITSHM: "1"
+      HOME: "/tmp"
+      XDG_RUNTIME_DIR: "/tmp"
+    volumes:
+      - /run/desktop/mnt/host/wslg/.X11-unix:/tmp/.X11-unix
+      - /run/desktop/mnt/host/wslg:/mnt/wslg
+      - .:/app

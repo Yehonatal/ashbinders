@@ -30,9 +30,15 @@ packages/
 
 # Build and Export outputs
 build/
-export/
 dist/
 game/export/
+
+# Ignore export contents, but keep the export/web/ directory in the repo
+# so Dockerfile.web's COPY step always has something to copy.
+export/*
+!export/web/
+export/web/*
+!export/web/.gitkeep
 
 # OS-specific files
 .DS_Store
@@ -57,3 +63,4 @@ project.assets.json
 
 # Claude Code
 .claude/
+.env

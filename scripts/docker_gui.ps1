@@ -1,11 +1,7 @@
-# PowerShell script to launch Ashbinders GUI in Docker on Windows (WSLg / VcXsrv)
+# Launch Ashbinders GUI in Docker on Windows (Docker Desktop + WSL2/WSLg)
 Write-Host "=== Launching Ashbinders GUI in Docker ===" -ForegroundColor Cyan
 
-# Check for WSLg or set DISPLAY to host IP
-if (-not $env:DISPLAY) {
-    # Default for VcXsrv / Xming
-    $env:DISPLAY = "host.docker.internal:0.0"
-}
+if (-not $env:DISPLAY) { $env:DISPLAY = ":0" }
 
-docker compose build gui
-docker compose run --rm -e DISPLAY=$env:DISPLAY gui
+docker compose --profile windows build gui-win
+docker compose --profile windows run --rm gui-win @args
